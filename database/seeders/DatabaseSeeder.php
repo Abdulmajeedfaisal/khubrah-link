@@ -15,16 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->command->info('🚀 بدء تعبئة قاعدة البيانات...');
+        
         // Create admin user
         $this->call(AdminSeeder::class);
 
-        // Create test users (optional)
-        // User::factory(10)->create();
+        // Create categories
+        $this->call(CategorySeeder::class);
 
-        // Create a regular test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create test users
+        $this->call(UsersSeeder::class);
+
+        // Create skills
+        $this->call(SkillsSeeder::class);
+
+        // Create sessions
+        $this->call(SessionsSeeder::class);
+
+        // Create reports
+        $this->call(ReportsSeeder::class);
+
+        $this->command->info('');
+        $this->command->info('🎉 تم تعبئة قاعدة البيانات بنجاح!');
     }
 }

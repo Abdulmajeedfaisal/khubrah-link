@@ -13,6 +13,7 @@ Route::domain(env('APP_DOMAIN', 'khubrahlink.test'))->group(function () {
 
     // Browse Skills - للزوار والمستخدمين
     Route::get('/skills', [SkillController::class, 'index'])->name('skills.index');
+    Route::get('/skills/{skill}', [SkillController::class, 'show'])->name('skills.show');
 
     // Public Profile - للزوار والمستخدمين
     Route::get('/profile/{username}', [PublicProfileController::class, 'show'])->name('profile.public');
@@ -34,37 +35,43 @@ Route::domain(env('APP_DOMAIN', 'khubrahlink.test'))->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
     // Skills Management
-    Route::get('/skills/manage', function () {
-        return view('skills.manage');
-    })->name('skills.manage');
+    Route::get('/skills/manage', [SkillController::class, 'manage'])->name('skills.manage');
+    Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
+    Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('skills.update');
+    Route::post('/skills/{skill}/toggle', [SkillController::class, 'toggleStatus'])->name('skills.toggle');
+    Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('skills.destroy');
     
     // Sessions
-    Route::get('/sessions', function () {
-        return view('sessions.index');
-    })->name('sessions.index');
-    
-    Route::get('/sessions/book/{user}', function () {
-        return view('sessions.book');
-    })->name('sessions.book');
-    
-    Route::get('/sessions/{id}', function () {
-        return view('sessions.show');
-    })->name('sessions.show');
+    Route::get('/sessions', [App\Http\Controllers\SessionController::class, 'index'])->name('sessions.index');
+    Route::get('/sessions/book/{user}', [App\Http\Controllers\SessionController::class, 'create'])->name('sessions.book');
+    Route::post('/sessions', [App\Http\Controllers\SessionController::class, 'store'])->name('sessions.store');
+    Route::get('/sessions/{session}', [App\Http\Controllers\SessionController::class, 'show'])->name('sessions.show');
+    Route::post('/sessions/{session}/confirm', [App\Http\Controllers\SessionController::class, 'confirm'])->name('sessions.confirm');
+    Route::post('/sessions/{session}/complete', [App\Http\Controllers\SessionController::class, 'complete'])->name('sessions.complete');
+    Route::post('/sessions/{session}/cancel', [App\Http\Controllers\SessionController::class, 'cancel'])->name('sessions.cancel');
+    Route::post('/sessions/{session}/reschedule', [App\Http\Controllers\SessionController::class, 'reschedule'])->name('sessions.reschedule');
     
     // Messages
-    Route::get('/messages', function () {
-        return view('messages.index');
-    })->name('messages.index');
+    Route::get('/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{user}', [App\Http\Controllers\MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages', [App\Http\Controllers\MessageController::class, 'store'])->name('messages.store');
+    Route::post('/messages/{conversation}/read', [App\Http\Controllers\MessageController::class, 'markAsRead'])->name('messages.read');
     
     // Reviews
-    Route::get('/reviews/create/{session}', function () {
-        return view('reviews.create');
-    })->name('reviews.create');
+    Route::get('/reviews/create/{session}', [App\Http\Controllers\ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/reviews/{session}', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::put('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'update'])->name('reviews.update');
+    Route::delete('/reviews/{review}', [App\Http\Controllers\ReviewController::class, 'destroy'])->name('reviews.destroy');
+    
+    // Reports
+    Route::post('/reports', [App\Http\Controllers\ReportController::class, 'store'])->name('reports.store');
     
     // Notifications
-    Route::get('/notifications', function () {
-        return view('notifications.index');
-    })->name('notifications.index');
+    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::get('/notifications/count', [App\Http\Controllers\NotificationController::class, 'getUnreadCount'])->name('notifications.count');
+    Route::delete('/notifications/{id}', [App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
     
         // Settings
         Route::get('/settings', function () {

@@ -7,43 +7,75 @@ use Illuminate\Http\Request;
 class NotificationController extends Controller
 {
     /**
-     * Display a listing of user notifications.
+     * Display a listing of user notifications
      */
     public function index()
     {
-        // TODO: Fetch user notifications from database
-        return view('notifications.index');
+        $user = auth()->user();
+        
+        $notifications = $user->notifications()
+            ->paginate(20);
+        
+        $unreadCount = $user->unreadNotifications()->count();
+
+        return view('notifications.index', compact('notifications', 'unreadCount'));
     }
 
     /**
-     * Mark notification as read.
+     * Mark notification as read
      */
     public function markAsRead($id)
     {
-        // TODO: Mark specific notification as read
+        $user = auth()->user();
+        
+        $notification = $user->notifications()->findOrFail($id);
+        $notification->markAsRead();
+
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * Mark all notifications as read.
+     * Mark all notifications as read
      */
     public function markAllAsRead()
     {
-        // TODO: Mark all user notifications as read
-        return redirect()->route('notifications.index')
+        $user = auth()->user();
+        
+        $user->unreadNotifications->markAsRead();
+
+        return redirect()
+            ->route('notifications.index')
             ->with('success', 'تم تعليم جميع الإشعارات كمقروءة');
     }
 
     /**
-     * Get unread notifications count.
+     * Get unread notifications count
      */
     public function getUnreadCount()
     {
-        // TODO: Return count of unread notifications
+        $user = auth()->user();
+        
+        $count = $user->unreadNotifications()->count();
+
         return response()->json([
-            'count' => 0
+            'count' => $count,
+        ]);
+    }
+
+    /**
+     * Delete notification
+     */
+    public function destroy($id)
+    {
+        $user = auth()->user();
+        
+        $notification = $user->notifications()->findOrFail($id);
+        $notification->delete();
+
+        return response()->json([
+            'success' => true,
         ]);
     }
 }

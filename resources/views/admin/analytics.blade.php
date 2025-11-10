@@ -2,6 +2,30 @@
     <x-slot name="header">التحليلات والإحصائيات</x-slot>
 
     <div class="space-y-6">
+        <!-- Time Range Selector -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white">الفترة الزمنية</h3>
+                <div class="flex gap-2">
+                    <a href="{{ route('admin.analytics', ['days' => 7]) }}" 
+                       class="px-4 py-2 rounded-lg font-semibold transition-colors {{ request('days', 30) == 7 ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600' }}">
+                        7 أيام
+                    </a>
+                    <a href="{{ route('admin.analytics', ['days' => 30]) }}" 
+                       class="px-4 py-2 rounded-lg font-semibold transition-colors {{ request('days', 30) == 30 ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600' }}">
+                        30 يوم
+                    </a>
+                    <a href="{{ route('admin.analytics', ['days' => 90]) }}" 
+                       class="px-4 py-2 rounded-lg font-semibold transition-colors {{ request('days', 30) == 90 ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600' }}">
+                        90 يوم
+                    </a>
+                    <a href="{{ route('admin.analytics', ['days' => 365]) }}" 
+                       class="px-4 py-2 rounded-lg font-semibold transition-colors {{ request('days', 30) == 365 ? 'bg-primary-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600' }}">
+                        سنة
+                    </a>
+                </div>
+            </div>
+        </div>
         <!-- Overview Stats -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
@@ -53,27 +77,17 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- User Growth -->
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">نمو المستخدمين (آخر 6 أشهر)</h3>
-                <div class="h-80 flex items-center justify-center text-gray-400">
-                    <div class="text-center">
-                        <svg class="w-20 h-20 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                        </svg>
-                        <p class="text-sm">Chart.js سيتم إضافته هنا</p>
-                    </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">نمو المستخدمين (آخر {{ $days }} يوم)</h3>
+                <div style="height: 320px;">
+                    <canvas id="usersGrowthChart"></canvas>
                 </div>
             </div>
 
             <!-- Sessions Activity -->
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">نشاط الجلسات</h3>
-                <div class="h-80 flex items-center justify-center text-gray-400">
-                    <div class="text-center">
-                        <svg class="w-20 h-20 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
-                        </svg>
-                        <p class="text-sm">Line Chart سيتم إضافته هنا</p>
-                    </div>
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">نشاط الجلسات (آخر {{ $days }} يوم)</h3>
+                <div style="height: 320px;">
+                    <canvas id="sessionsActivityChart"></canvas>
                 </div>
             </div>
         </div>
@@ -209,4 +223,170 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <script>
+        // Chart Configuration
+        const chartColors = {
+            primary: 'rgb(59, 130, 246)',
+            success: 'rgb(34, 197, 94)',
+            warning: 'rgb(251, 146, 60)',
+            danger: 'rgb(239, 68, 68)',
+            info: 'rgb(168, 85, 247)',
+        };
+
+        // Chart Data from Backend
+        const usersGrowth = @json($usersGrowth);
+        const sessionsActivity = @json($sessionsActivity);
+        
+        const labels = usersGrowth.map(item => item.date_ar);
+        const usersData = usersGrowth.map(item => item.count);
+        const usersCumulative = usersGrowth.map(item => item.cumulative);
+        
+        const sessionsBooked = sessionsActivity.map(item => item.booked);
+        const sessionsCompleted = sessionsActivity.map(item => item.completed);
+        const sessionsCancelled = sessionsActivity.map(item => item.cancelled);
+
+        // Users Growth Chart
+        const usersGrowthCtx = document.getElementById('usersGrowthChart').getContext('2d');
+        new Chart(usersGrowthCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'مستخدمون جدد',
+                        data: usersData,
+                        borderColor: chartColors.primary,
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                    {
+                        label: 'إجمالي المستخدمين',
+                        data: usersCumulative,
+                        borderColor: chartColors.success,
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderDash: [5, 5],
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            font: { family: 'Cairo, sans-serif', size: 12 },
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: { family: 'Cairo, sans-serif', size: 14 },
+                        bodyFont: { family: 'Cairo, sans-serif', size: 13 },
+                        displayColors: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            font: { family: 'Cairo, sans-serif' }
+                        },
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                    },
+                    x: {
+                        ticks: { font: { family: 'Cairo, sans-serif' } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // Sessions Activity Chart
+        const sessionsActivityCtx = document.getElementById('sessionsActivityChart').getContext('2d');
+        new Chart(sessionsActivityCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'محجوزة',
+                        data: sessionsBooked,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'مكتملة',
+                        data: sessionsCompleted,
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                        borderRadius: 6,
+                    },
+                    {
+                        label: 'ملغاة',
+                        data: sessionsCancelled,
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderRadius: 6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            font: { family: 'Cairo, sans-serif', size: 12 },
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: { family: 'Cairo, sans-serif', size: 14 },
+                        bodyFont: { family: 'Cairo, sans-serif', size: 13 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stacked: false,
+                        ticks: {
+                            stepSize: 1,
+                            font: { family: 'Cairo, sans-serif' }
+                        },
+                        grid: { color: 'rgba(0, 0, 0, 0.05)' }
+                    },
+                    x: {
+                        stacked: false,
+                        ticks: { font: { family: 'Cairo, sans-serif' } },
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+    @endpush
 </x-admin-layout>

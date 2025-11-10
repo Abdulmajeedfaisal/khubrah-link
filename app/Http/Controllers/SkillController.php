@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Skill;
+use App\Models\Category;
+use App\Http\Requests\SkillRequest;
 use Illuminate\Http\Request;
 
 class SkillController extends Controller
@@ -11,115 +14,174 @@ class SkillController extends Controller
      */
     public function index(Request $request)
     {
-        // TODO: Backend Developer - Replace with actual database queries
-        
-        // Get dummy data
-        $skills = $this->getDummySkills();
+        $query = Skill::with(['user', 'category'])
+            ->active();
         
         // Apply Search Filter
-        if ($request->has('search') && $request->search) {
-            $searchTerm = strtolower($request->search);
-            $skills = $skills->filter(function($skill) use ($searchTerm) {
-                return str_contains(strtolower($skill['skill_name']), $searchTerm) ||
-                       str_contains(strtolower($skill['description']), $searchTerm);
-            });
+        if ($request->filled('search')) {
+            $query->search($request->search);
         }
         
         // Apply Category Filter
-        if ($request->has('category') && $request->category) {
-            $skills = $skills->filter(function($skill) use ($request) {
-                return strtolower($skill['category']) === strtolower($request->category);
-            });
+        if ($request->filled('category')) {
+            $query->byCategory($request->category);
         }
         
         // Apply Location Filter
-        if ($request->has('location') && $request->location) {
-            $skills = $skills->filter(function($skill) use ($request) {
-                return str_contains(strtolower($skill['location']), strtolower($request->location));
-            });
+        if ($request->filled('location')) {
+            $query->byLocation($request->location);
         }
         
-        // Apply Mode Filter
-        if ($request->has('mode') && $request->mode) {
-            $skills = $skills->filter(function($skill) use ($request) {
-                return str_contains(strtolower($skill['mode']), strtolower($request->mode));
-            });
+        // Apply Session Type Filter
+        if ($request->filled('mode')) {
+            $sessionType = $request->mode === 'عن بُعد' ? 'online' : 
+                          ($request->mode === 'حضوري' ? 'in-person' : null);
+            if ($sessionType) {
+                $query->bySessionType($sessionType);
+            }
         }
         
-        // TODO: Implement pagination (12 per page) when using real database
-        // $skills = UserSkill::with(['user', 'skill'])
-        //     ->where('skill_type', 'teach')
-        //     ->when($request->category, fn($q, $cat) => 
-        //         $q->whereHas('skill', fn($q) => $q->where('category', $cat))
-        //     )
-        //     ->when($request->location, fn($q, $loc) => 
-        //         $q->whereHas('user', fn($q) => $q->where('location', $loc))
-        //     )
-        //     ->when($request->mode, fn($q, $mode) => 
-        //         $q->where('preferred_mode', $mode)
-        //     )
-        //     ->when($request->search, fn($q, $search) => 
-        //         $q->whereHas('skill', fn($q) => 
-        //             $q->where('skill_name', 'like', "%{$search}%")
-        //         )
-        //     )
-        //     ->paginate(12);
+        // Apply Level Filter
+        if ($request->filled('level')) {
+            $query->byLevel($request->level);
+        }
         
-        return view('pages.browse', compact('skills'));
+        // Apply Price Range Filter
+        if ($request->filled('min_price') && $request->filled('max_price')) {
+            $query->byPriceRange($request->min_price, $request->max_price);
+        }
+        
+        // Sorting
+        $sortBy = $request->get('sort', 'newest');
+        switch ($sortBy) {
+            case 'price_low':
+                $query->orderBy('price_per_hour', 'asc');
+                break;
+            case 'price_high':
+                $query->orderBy('price_per_hour', 'desc');
+                break;
+            case 'rating':
+                // TODO: Add rating sort when reviews are implemented
+                $query->orderBy('created_at', 'desc');
+                break;
+            default: // newest
+                $query->orderBy('created_at', 'desc');
+        }
+        
+        $skills = $query->paginate(12);
+        $categories = Category::active()->ordered()->get();
+        
+        return view('pages.browse', compact('skills', 'categories'));
     }
-    
+
     /**
-     * Dummy data for development
-     * TODO: Backend Developer - Remove this method after implementing database
+     * Display the specified skill
      */
-    private function getDummySkills()
+    public function show(Skill $skill)
     {
-        return collect([
-            [
-                'id' => 1,
-                'provider' => [
-                    'name' => 'أحمد محمد',
-                    'avatar' => 'أ',
-                    'rating' => 4.9,
-                    'reviews_count' => 24,
-                ],
-                'skill_name' => 'تطوير تطبيقات الويب بـ Laravel',
-                'description' => 'تعلم بناء تطبيقات ويب احترافية باستخدام Laravel مع أفضل الممارسات',
-                'category' => 'التقنية',
-                'level' => 'متقدم',
-                'location' => 'الرياض',
-                'mode' => 'حضوري / عن بُعد',
-            ],
-            [
-                'id' => 2,
-                'provider' => [
-                    'name' => 'سارة أحمد',
-                    'avatar' => 'س',
-                    'rating' => 5.0,
-                    'reviews_count' => 18,
-                ],
-                'skill_name' => 'تصميم واجهات المستخدم UI/UX',
-                'description' => 'تعلم أساسيات ومبادئ تصميم واجهات المستخدم باستخدام Figma',
-                'category' => 'التصميم',
-                'level' => 'مبتدئ',
-                'location' => 'جدة',
-                'mode' => 'عن بُعد فقط',
-            ],
-            [
-                'id' => 3,
-                'provider' => [
-                    'name' => 'محمد علي',
-                    'avatar' => 'م',
-                    'rating' => 4.7,
-                    'reviews_count' => 32,
-                ],
-                'skill_name' => 'تعلم اللغة الإنجليزية - محادثة',
-                'description' => 'حسّن مهاراتك في المحادثة باللغة الإنجليزية',
-                'category' => 'اللغات',
-                'level' => 'متوسط',
-                'location' => 'الدمام',
-                'mode' => 'حضوري / عن بُعد',
-            ],
+        $skill->load(['user', 'category', 'reviews.reviewer']);
+        $skill->incrementViews();
+        
+        return view('skills.show', compact('skill'));
+    }
+
+    /**
+     * Show form for managing user's skills
+     */
+    public function manage()
+    {
+        $user = auth()->user();
+        $mySkills = Skill::where('user_id', $user->id)->with('category')->get();
+        $categories = Category::active()->ordered()->get();
+        
+        return view('skills.manage', compact('mySkills', 'categories'));
+    }
+
+    /**
+     * Store a newly created skill
+     */
+    public function store(SkillRequest $request)
+    {
+        $skill = Skill::create([
+            'user_id' => auth()->id(),
+            'category_id' => $request->category_id,
+            'title' => $request->title,
+            'description' => $request->description,
+            'level' => $request->level,
+            'price_per_hour' => $request->price_per_hour,
+            'session_duration' => $request->session_duration,
+            'location' => $request->location,
+            'session_type' => $request->session_type,
         ]);
+
+        logActivity('created', $skill, 'Created skill: ' . $skill->title);
+
+        return redirect()
+            ->route('skills.manage')
+            ->with('success', 'تم إضافة المهارة بنجاح');
+    }
+
+    /**
+     * Update the specified skill
+     */
+    public function update(SkillRequest $request, Skill $skill)
+    {
+        // Check authorization
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'غير مصرح لك بتعديل هذه المهارة');
+        }
+
+        $skill->update($request->validated());
+
+        logActivity('updated', $skill, 'Updated skill: ' . $skill->title);
+
+        return redirect()
+            ->route('skills.manage')
+            ->with('success', 'تم تحديث المهارة بنجاح');
+    }
+
+    /**
+     * Toggle skill status
+     */
+    public function toggleStatus(Skill $skill)
+    {
+        // Check authorization
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'غير مصرح لك بتعديل هذه المهارة');
+        }
+
+        $newStatus = $skill->toggleStatus();
+        $statusText = $newStatus ? 'تفعيل' : 'تعطيل';
+
+        return redirect()
+            ->route('skills.manage')
+            ->with('success', "تم {$statusText} المهارة بنجاح");
+    }
+
+    /**
+     * Remove the specified skill
+     */
+    public function destroy(Skill $skill)
+    {
+        // Check authorization
+        if ($skill->user_id !== auth()->id()) {
+            abort(403, 'غير مصرح لك بحذف هذه المهارة');
+        }
+
+        // Check if skill has sessions
+        if ($skill->hasSessions()) {
+            return redirect()
+                ->route('skills.manage')
+                ->with('error', 'لا يمكن حذف المهارة لأنها تحتوي على جلسات');
+        }
+
+        $skillTitle = $skill->title;
+        $skill->delete();
+
+        logActivity('deleted', null, 'Deleted skill: ' . $skillTitle);
+
+        return redirect()
+            ->route('skills.manage')
+            ->with('success', 'تم حذف المهارة بنجاح');
     }
 }

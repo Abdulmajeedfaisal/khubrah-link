@@ -2,66 +2,127 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
+use App\Models\Session;
+use App\Http\Requests\ReviewRequest;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
     /**
-     * Show the form for creating a new review.
+     * Show the form for creating a new review
      */
-    public function create($sessionId)
+    public function create(Session $session)
     {
-        // TODO: Fetch session details and verify user can review
-        return view('reviews.create', compact('sessionId'));
+        // Check authorization
+        if (!$session->isParticipant(auth()->id())) {
+            abort(403, 'غير مصرح لك بتقييم هذه الجلسة');
+        }
+
+        // Check if session can be reviewed
+        if (!$session->canBeReviewed()) {
+            return redirect()
+                ->back()
+                ->with('error', 'لا يمكن تقييم هذه الجلسة');
+        }
+
+        // Check if already reviewed
+        if ($session->review()->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'تم تقييم هذه الجلسة مسبقاً');
+        }
+
+        $session->load(['skill', 'teacher', 'learner']);
+
+        return view('reviews.create', compact('session'));
     }
 
     /**
-     * Store a newly created review in storage.
+     * Store a newly created review
      */
-    public function store(Request $request)
+    public function store(ReviewRequest $request, Session $session)
     {
-        // TODO: Validate and store review
-        // $validated = $request->validate([
-        //     'session_id' => 'required|exists:sessions,id',
-        //     'rating' => 'required|integer|min:1|max:5',
-        //     'communication_rating' => 'required|integer|min:1|max:5',
-        //     'knowledge_rating' => 'required|integer|min:1|max:5',
-        //     'patience_rating' => 'required|integer|min:1|max:5',
-        //     'preparation_rating' => 'required|integer|min:1|max:5',
-        //     'comment' => 'required|string|min:10',
-        //     'would_recommend' => 'boolean',
-        //     ]);
+        // Check authorization
+        if (!$session->isParticipant(auth()->id())) {
+            abort(403, 'غير مصرح لك بتقييم هذه الجلسة');
+        }
 
-        return redirect()->route('sessions.show', $request->session_id)
+        // Check if session can be reviewed
+        if (!$session->canBeReviewed()) {
+            return redirect()
+                ->back()
+                ->with('error', 'لا يمكن تقييم هذه الجلسة');
+        }
+
+        // Check if already reviewed
+        if ($session->review()->exists()) {
+            return redirect()
+                ->back()
+                ->with('error', 'تم تقييم هذه الجلسة مسبقاً');
+        }
+
+        // Determine who is being reviewed
+        $revieweeId = $session->isTeacher(auth()->id()) 
+            ? $session->learner_id 
+            : $session->teacher_id;
+
+        $review = Review::create([
+            'session_id' => $session->id,
+            'reviewer_id' => auth()->id(),
+            'reviewee_id' => $revieweeId,
+            'overall_rating' => $request->overall_rating,
+            'communication_rating' => $request->communication_rating,
+            'knowledge_rating' => $request->knowledge_rating,
+            'punctuality_rating' => $request->punctuality_rating,
+            'professionalism_rating' => $request->professionalism_rating,
+            'comment' => $request->comment,
+        ]);
+
+        logActivity('created', $review, 'Created review for session: ' . $session->id);
+
+        // TODO: Send notification to reviewee
+
+        return redirect()
+            ->route('sessions.show', $session)
             ->with('success', 'شكراً لك! تم إرسال تقييمك بنجاح');
     }
 
     /**
-     * Display the specified review.
+     * Update the specified review
      */
-    public function show($id)
+    public function update(ReviewRequest $request, Review $review)
     {
-        // TODO: Fetch review details
-        return view('reviews.show', compact('id'));
+        // Check authorization
+        if ($review->reviewer_id !== auth()->id()) {
+            abort(403, 'غير مصرح لك بتعديل هذا التقييم');
+        }
+
+        $review->update($request->validated());
+
+        logActivity('updated', $review, 'Updated review');
+
+        return redirect()
+            ->back()
+            ->with('success', 'تم تحديث التقييم بنجاح');
     }
 
     /**
-     * Update the specified review in storage.
+     * Remove the specified review
      */
-    public function update(Request $request, $id)
+    public function destroy(Review $review)
     {
-        // TODO: Update review
-        return redirect()->route('reviews.show', $id)
-            ->with('success', 'تم تحديث التقييم بنجاح!');
-    }
+        // Check authorization
+        if ($review->reviewer_id !== auth()->id()) {
+            abort(403, 'غير مصرح لك بحذف هذا التقييم');
+        }
 
-    /**
-     * Remove the specified review from storage.
-     */
-    public function destroy($id)
-    {
-        // TODO: Delete review
-        return redirect()->route('profile.show')
-            ->with('success', 'تم حذف التقييم بنجاح!');
+        $review->delete();
+
+        logActivity('deleted', null, 'Deleted review');
+
+        return redirect()
+            ->back()
+            ->with('success', 'تم حذف التقييم بنجاح');
     }
 }
