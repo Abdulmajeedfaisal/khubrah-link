@@ -1,16 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                    </svg>
+            <div>
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                        </svg>
+                    </div>
+                    <h2 class="font-bold text-3xl text-gray-900 dark:text-white">
+                        مرحباً، {{ Auth::user()->name }}
+                    </h2>
                 </div>
-                <h2 class="font-bold text-3xl text-gray-900 dark:text-white">
-                    مرحباً، {{ Auth::user()->name }}
-                </h2>
-            </div>
                 <p class="text-gray-600 dark:text-gray-400 mt-1">
                     إليك ملخص نشاطك اليوم
                 </p>
@@ -29,7 +30,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-blue-100 text-sm font-medium">مهاراتي</p>
-                        <h3 class="text-4xl font-bold mt-2">12</h3>
+                        <h3 class="text-4xl font-bold mt-2">{{ $userStats['total_skills'] }}</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -37,7 +38,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-blue-100 text-sm">+2 هذا الشهر</p>
+                <p class="text-blue-100 text-sm">{{ $userStats['active_skills'] }} نشطة</p>
             </div>
 
             <!-- Total Sessions -->
@@ -45,7 +46,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-green-100 text-sm font-medium">الجلسات</p>
-                        <h3 class="text-4xl font-bold mt-2">24</h3>
+                        <h3 class="text-4xl font-bold mt-2">{{ $userStats['total_sessions'] }}</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,7 +54,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-green-100 text-sm">5 قادمة</p>
+                <p class="text-green-100 text-sm">{{ $userStats['upcoming_sessions'] }} قادمة</p>
             </div>
 
             <!-- Messages -->
@@ -61,7 +62,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-purple-100 text-sm font-medium">الرسائل</p>
-                        <h3 class="text-4xl font-bold mt-2">8</h3>
+                        <h3 class="text-4xl font-bold mt-2">{{ $recentConversations->count() }}</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +70,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-purple-100 text-sm">3 غير مقروءة</p>
+                <p class="text-purple-100 text-sm">{{ $userStats['unread_messages'] }} غير مقروءة</p>
             </div>
 
             <!-- Rating -->
@@ -77,7 +78,7 @@
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-yellow-100 text-sm font-medium">التقييم</p>
-                        <h3 class="text-4xl font-bold mt-2">4.8</h3>
+                        <h3 class="text-4xl font-bold mt-2">{{ $userStats['average_rating'] > 0 ? number_format($userStats['average_rating'], 1) : '-' }}</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
@@ -85,7 +86,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-yellow-100 text-sm">من 15 تقييم</p>
+                <p class="text-yellow-100 text-sm">من {{ $userStats['total_reviews'] }} تقييم</p>
             </div>
         </div>
 
@@ -101,56 +102,42 @@
                     </div>
 
                     <div class="space-y-4">
-                        <!-- Session Card 1 -->
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:shadow-md transition-shadow cursor-pointer">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    م
+                        @forelse($upcomingSessions as $session)
+                            @php
+                                $otherUser = $session->teacher_id === auth()->id() ? $session->learner : $session->teacher;
+                                $role = $session->teacher_id === auth()->id() ? 'تعليم' : 'تعلم';
+                            @endphp
+                            <a href="{{ route('sessions.show', $session) }}" class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="flex-shrink-0">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                        {{ mb_substr($otherUser->name, 0, 1) }}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white truncate">محمد أحمد</h4>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">تعلم Laravel</p>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">غداً</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">3:00 م</p>
-                            </div>
-                        </div>
-
-                        <!-- Session Card 2 -->
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:shadow-md transition-shadow cursor-pointer">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    س
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900 dark:text-white truncate">{{ $otherUser->name }}</h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $role }} {{ $session->skill->title }}</p>
                                 </div>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white truncate">سارة خالد</h4>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">تعليم Photoshop</p>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">الأحد</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">5:00 م</p>
-                            </div>
-                        </div>
-
-                        <!-- Session Card 3 -->
-                        <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl hover:shadow-md transition-shadow cursor-pointer">
-                            <div class="flex-shrink-0">
-                                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                    ع
+                                <div class="text-left">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $session->scheduled_at->isToday() ? 'اليوم' : ($session->scheduled_at->isTomorrow() ? 'غداً' : $session->scheduled_at->locale('ar')->translatedFormat('l')) }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $session->scheduled_at->format('g:i A') }}</p>
                                 </div>
+                            </a>
+                        @empty
+                            <div class="text-center py-12">
+                                <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-gray-500 dark:text-gray-400 mb-4">لا توجد جلسات قادمة</p>
+                                <a href="{{ route('skills.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    ابحث عن مهارة
+                                </a>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white truncate">عبدالله محمود</h4>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">تعلم اللغة الإنجليزية</p>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-sm font-semibold text-gray-900 dark:text-white">الإثنين</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">7:00 م</p>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -194,42 +181,36 @@
                     </div>
 
                     <div class="space-y-3">
-                        <!-- Message 1 -->
-                        <div class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
-                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                م
+                        @forelse($recentConversations as $conversation)
+                            @php
+                                $otherUser = $conversation->user1_id === auth()->id() ? $conversation->user2 : $conversation->user1;
+                                $lastMessage = $conversation->messages->first();
+                            @endphp
+                            <a href="{{ route('messages.show', $otherUser) }}" class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                                    {{ mb_substr($otherUser->name, 0, 1) }}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm">{{ $otherUser->name }}</h4>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
+                                        {{ $lastMessage ? Str::limit($lastMessage->message, 40) : 'لا توجد رسائل' }}
+                                    </p>
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">
+                                        {{ $lastMessage ? $lastMessage->created_at->diffForHumans() : 'الآن' }}
+                                    </span>
+                                </div>
+                                @if($lastMessage && !$lastMessage->is_read && $lastMessage->sender_id !== auth()->id())
+                                    <span class="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-2"></span>
+                                @endif
+                            </a>
+                        @empty
+                            <div class="text-center py-8">
+                                <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                </svg>
+                                <p class="text-gray-500 dark:text-gray-400 text-sm">لا توجد رسائل</p>
                             </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">محمد أحمد</h4>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 truncate">شكراً على الجلسة الرائعة!</p>
-                                <span class="text-xs text-gray-500 dark:text-gray-500">منذ ساعتين</span>
-                            </div>
-                            <span class="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-2"></span>
-                        </div>
-
-                        <!-- Message 2 -->
-                        <div class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
-                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                س
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">سارة خالد</h4>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 truncate">هل يمكننا تغيير موعد الجلسة؟</p>
-                                <span class="text-xs text-gray-500 dark:text-gray-500">منذ 5 ساعات</span>
-                            </div>
-                        </div>
-
-                        <!-- Message 3 -->
-                        <div class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
-                            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                ع
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h4 class="font-semibold text-gray-900 dark:text-white text-sm">عبدالله محمود</h4>
-                                <p class="text-xs text-gray-600 dark:text-gray-400 truncate">مرحباً، أريد حجز جلسة</p>
-                                <span class="text-xs text-gray-500 dark:text-gray-500">أمس</span>
-                            </div>
-                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
