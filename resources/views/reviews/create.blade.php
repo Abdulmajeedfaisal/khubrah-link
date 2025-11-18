@@ -7,6 +7,36 @@
 
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        <!-- Version 2 Notice -->
+        <div class="mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-yellow-800 dark:text-yellow-300 mb-2">
+                        ⏳ قيد التطوير - الإصدار الثاني
+                    </h3>
+                    <p class="text-yellow-700 dark:text-yellow-400 leading-relaxed mb-3">
+                        نظام التقييمات قيد التطوير حالياً وسيكون متاحاً في الإصدار الثاني من المنصة. سيتضمن النظام:
+                    </p>
+                    <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 space-y-1 mr-4">
+                        <li>تقييم شامل للجلسات (5 نجوم)</li>
+                        <li>تقييمات فرعية (التواصل، المعرفة، الالتزام، الاحترافية)</li>
+                        <li>إضافة تعليقات نصية</li>
+                        <li>عرض التقييمات في الملفات الشخصية</li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-yellow-200 dark:border-yellow-800">
+                        <p class="text-sm text-yellow-600 dark:text-yellow-500">
+                            <strong>ملاحظة:</strong> النموذج أدناه للعرض التوضيحي فقط ولن يتم حفظ البيانات.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Session Summary -->
         <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 mb-6">
             <div class="flex items-center gap-4">
@@ -24,8 +54,8 @@
             </div>
         </div>
 
-        <!-- Review Form -->
-        <form class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 space-y-6">
+        <!-- Review Form (Disabled - Version 2) -->
+        <form class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6 space-y-6 opacity-60 pointer-events-none">
             
             <!-- Rating -->
             <div>

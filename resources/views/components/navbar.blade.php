@@ -46,15 +46,16 @@
 
                 @auth
                     <!-- Notifications -->
-                    <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                    <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="قيد التطوير - الإصدار الثاني">
                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
                         <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <span class="absolute -top-1 -right-1 px-1.5 py-0.5 bg-yellow-500 text-white text-[9px] rounded-full font-bold">V2</span>
                     </a>
 
                     <!-- Messages -->
-                    <a href="{{ route('messages.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                    <a href="{{ route('messages.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="قيد التطوير - الإصدار الثاني">
                         <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                         </svg>
@@ -70,6 +71,7 @@
                         @if($unreadMessages > 0)
                         <span class="absolute top-1 right-1 w-5 h-5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center font-bold">{{ $unreadMessages > 9 ? '9+' : $unreadMessages }}</span>
                         @endif
+                        <span class="absolute -top-1 -right-1 px-1.5 py-0.5 bg-yellow-500 text-white text-[9px] rounded-full font-bold">V2</span>
                     </a>
 
                     <!-- User Menu Dropdown -->
@@ -130,6 +132,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                                 </svg>
                                 <span class="font-medium">الرسائل</span>
+                                <span class="mr-auto px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs rounded-full font-bold">V2</span>
                             </a>
 
                             <a href="{{ route('notifications.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
@@ -137,6 +140,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                                 </svg>
                                 <span class="font-medium">الإشعارات</span>
+                                <span class="mr-auto px-2 py-0.5 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs rounded-full font-bold">V2</span>
                             </a>
 
                             <a href="{{ route('settings') }}" class="flex items-center gap-3 px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
@@ -174,15 +178,16 @@
             <div class="lg:hidden flex items-center gap-2">
                 @auth
                     <!-- Notifications Icon - Mobile -->
-                    <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                    <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="قيد التطوير - الإصدار الثاني">
                         <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                         </svg>
                         <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <span class="absolute -top-0.5 -right-0.5 px-1 py-0.5 bg-yellow-500 text-white text-[8px] rounded-full font-bold">V2</span>
                     </a>
 
                     <!-- Messages Icon - Mobile -->
-                    <a href="{{ route('messages.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+                    <a href="{{ route('messages.index') }}" class="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" title="قيد التطوير - الإصدار الثاني">
                         <svg class="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                         </svg>
@@ -198,6 +203,7 @@
                         @if($unreadMessages > 0)
                         <span class="absolute top-0.5 right-0.5 w-4 h-4 bg-primary-600 text-white text-[10px] rounded-full flex items-center justify-center font-bold">{{ $unreadMessages > 9 ? '9+' : $unreadMessages }}</span>
                         @endif
+                        <span class="absolute -top-0.5 -right-0.5 px-1 py-0.5 bg-yellow-500 text-white text-[8px] rounded-full font-bold">V2</span>
                     </a>
                 @endauth
 

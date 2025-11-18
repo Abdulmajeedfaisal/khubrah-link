@@ -23,10 +23,15 @@ class AdminSeeder extends Seeder
 
         // Create admin user
         User::create([
-            'name' => 'Admin',
+            'name' => 'مدير النظام',
             'email' => 'admin@khubrahlink.com',
+            'username' => 'admin',
             'password' => Hash::make('password'),
             'is_admin' => true,
+            'role' => 'admin',
+            'location' => 'الرياض',
+            'bio' => 'مدير منصة خبرة لينك',
+            'is_active' => true,
             'email_verified_at' => now(),
         ]);
 

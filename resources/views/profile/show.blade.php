@@ -48,12 +48,8 @@
                                 <div class="text-xs text-gray-500 dark:text-gray-400">جلسة</div>
                             </div>
                             <div>
-                                @if($user->average_rating)
-                                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ number_format($user->average_rating, 1) }}</div>
-                                @else
-                                    <div class="text-2xl font-bold text-gray-400 dark:text-gray-500">-</div>
-                                @endif
-                                <div class="text-xs text-gray-500 dark:text-gray-400">تقييم</div>
+                                <div class="text-2xl font-bold text-gray-400 dark:text-gray-500">--</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">تقييم <span class="text-[10px] bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-1 rounded">V2</span></div>
                             </div>
                         </div>
                     </div>
@@ -199,14 +195,27 @@
                 <!-- Reviews Received -->
                 @if($reviews->count() > 0)
                     <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <!-- V2 Notice -->
+                        <div class="mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <h4 class="font-bold text-yellow-900 dark:text-yellow-200 mb-1">قيد التطوير - الإصدار الثاني</h4>
+                                    <p class="text-sm text-yellow-800 dark:text-yellow-300">نظام التقييمات الشامل قيد التطوير وسيكون متاحاً قريباً في الإصدار الثاني من المنصة.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2 opacity-60">
                             <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
                             التقييمات ({{ $reviewsCount }})
                         </h2>
                         
-                        <div class="space-y-6">
+                        <div class="space-y-6 opacity-60 pointer-events-none">
                             @foreach($reviews as $review)
                                 <div class="flex gap-4 @if(!$loop->first) pt-6 border-t border-gray-200 dark:border-slate-700 @endif">
                                     @if($review->reviewer->avatar)

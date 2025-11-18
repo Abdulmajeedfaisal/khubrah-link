@@ -430,30 +430,6 @@ php artisan test --coverage
 
 ---
 
-## 📚 التوثيق الإضافي
-
-| الملف | الوصف |
-|-------|-------|
-| [ADMIN_SETUP.md](ADMIN_SETUP.md) | دليل إعداد لوحة الإدارة والـ Subdomain |
-
----
-
-## 👥 الفريق
-
-**Final Year Project - Albaha University**
-
-- Abdul Wahab Ahmed Abdullah AL-Suhaimi (443036955)
-- Musaad Hussin Musaad AL-Shamrani (444027667)
-- Muhannad AHMAD Hassan Al-Zahrani (444027702)
-- Sultan Khalid Abdullrahim Alzahrani (444025350)
-- Rayan Ahmed Abdullah Al-Zahrani (444015731)
-
-**المشرف:** Dr. Mufrah Waqddani
-
-**المطور الرئيسي:** [Abdulmajeedfaisal](https://github.com/Abdulmajeedfaisal)
-
----
-
 ## 📄 الترخيص
 
 هذا المشروع مرخص تحت [MIT License](LICENSE).
@@ -469,9 +445,9 @@ php artisan test --coverage
 
 <div align="center">
 
-**صُنع بـ ❤️ في المملكة العربية السعودية**
+**صُنع بـ ❤️ بواسطة [Abdulmajeedfaisal](https://github.com/Abdulmajeedfaisal)**
 
-**Made with ❤️ in Saudi Arabia**
+**Made with ❤️ [Abdulmajeedfaisal](https://github.com/Abdulmajeedfaisal)**
 
 [⬆ العودة للأعلى](#khubrah-link-platform)
 

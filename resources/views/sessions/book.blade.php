@@ -200,15 +200,13 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ $teacher->bio ?? 'مستخدم' }}</p>
                         
                         <!-- Rating -->
-                        @if($teacher->average_rating)
-                            <div class="flex items-center justify-center gap-1 mb-2">
-                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                </svg>
-                                <span class="font-bold text-gray-900 dark:text-white">{{ number_format($teacher->average_rating, 1) }}</span>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">({{ $teacher->reviews_count }} تقييم)</span>
-                            </div>
-                        @endif
+                        <div class="flex items-center justify-center gap-1 mb-2">
+                            <svg class="w-5 h-5 text-gray-400 fill-current" viewBox="0 0 20 20">
+                                <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                            </svg>
+                            <span class="font-bold text-gray-400 dark:text-gray-500">--</span>
+                            <span class="text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 px-2 py-0.5 rounded">الإصدار الثاني</span>
+                        </div>
                     </div>
 
                     <!-- Stats -->

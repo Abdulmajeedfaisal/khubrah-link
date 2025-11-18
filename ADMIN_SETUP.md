@@ -1,26 +1,6 @@
 # 🔐 Admin Setup Guide - Khubrah-Link
 
-## ✅ ما تم إعداده:
-
-### 1. Migration
-- ✅ إضافة حقل `is_admin` في جدول `users`
-- ✅ القيمة الافتراضية: `false`
-
-### 2. Middleware
-- ✅ إنشاء `IsAdmin` middleware
-- ✅ التحقق من تسجيل الدخول
-- ✅ التحقق من صلاحيات الإدارة
-
-### 3. User Model
-- ✅ إضافة `is_admin` في `$fillable`
-- ✅ إضافة `is_admin` في `casts` كـ `boolean`
-
-### 4. Routes
-- ✅ جميع Admin Routes محمية بـ `auth` و `admin` middleware
-
----
-
-## 🚀 خطوات التفعيل:
+## 🚀 خطوات إنشاء Admin - Khubrah-Link :
 
 ### **الخطوة 1: تشغيل Migration**
 ```bash
@@ -61,20 +41,6 @@ User::create([
     'email_verified_at' => now(),
 ]);
 ```
-
-#### **الطريقة 4: جعل مستخدم موجود Admin**
-```bash
-php artisan tinker
-```
-
-```php
-# بالبريد الإلكتروني
-$user = User::where('email', 'test@example.com')->first();
-$user->is_admin = true;
-$user->save();
-```
-
----
 
 ## 🔑 تسجيل الدخول كـ Admin:
 

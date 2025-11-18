@@ -57,12 +57,15 @@
                 <p class="text-green-100 text-sm">{{ $userStats['upcoming_sessions'] }} قادمة</p>
             </div>
 
-            <!-- Messages -->
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
+            <!-- Messages (Version 2 - Coming Soon) -->
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg relative opacity-75">
+                <div class="absolute top-3 left-3 px-2 py-1 bg-yellow-500 text-white text-xs rounded-full font-bold">
+                    الإصدار الثاني
+                </div>
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-purple-100 text-sm font-medium">الرسائل</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ $recentConversations->count() }}</h3>
+                        <h3 class="text-4xl font-bold mt-2">--</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,15 +73,18 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-purple-100 text-sm">{{ $userStats['unread_messages'] }} غير مقروءة</p>
+                <p class="text-purple-100 text-sm">قيد التطوير</p>
             </div>
 
-            <!-- Rating -->
-            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105">
+            <!-- Rating (Version 2 - Coming Soon) -->
+            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl p-6 text-white shadow-lg relative opacity-75">
+                <div class="absolute top-3 left-3 px-2 py-1 bg-orange-500 text-white text-xs rounded-full font-bold">
+                    الإصدار الثاني
+                </div>
                 <div class="flex items-center justify-between mb-4">
                     <div>
                         <p class="text-yellow-100 text-sm font-medium">التقييم</p>
-                        <h3 class="text-4xl font-bold mt-2">{{ $userStats['average_rating'] > 0 ? number_format($userStats['average_rating'], 1) : '-' }}</h3>
+                        <h3 class="text-4xl font-bold mt-2">--</h3>
                     </div>
                     <div class="bg-white/20 p-4 rounded-xl">
                         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
@@ -86,7 +92,7 @@
                         </svg>
                     </div>
                 </div>
-                <p class="text-yellow-100 text-sm">من {{ $userStats['total_reviews'] }} تقييم</p>
+                <p class="text-yellow-100 text-sm">قيد التطوير</p>
             </div>
         </div>
 
@@ -171,8 +177,11 @@
                     </div>
                 </div>
 
-                <!-- Recent Messages -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                <!-- Recent Messages (Version 2 - Coming Soon) -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-2 border-yellow-200 dark:border-yellow-800 p-6 relative">
+                    <div class="absolute top-3 left-3 px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-xs rounded-full font-bold">
+                        الإصدار الثاني
+                    </div>
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">رسائل حديثة</h3>
                         <a href="{{ route('messages.index') }}" class="text-primary-600 dark:text-primary-400 hover:underline text-sm font-semibold">
@@ -180,37 +189,15 @@
                         </a>
                     </div>
 
-                    <div class="space-y-3">
-                        @forelse($recentConversations as $conversation)
-                            @php
-                                $otherUser = $conversation->user1_id === auth()->id() ? $conversation->user2 : $conversation->user1;
-                                $lastMessage = $conversation->messages->first();
-                            @endphp
-                            <a href="{{ route('messages.show', $otherUser) }}" class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-slate-700/50 rounded-xl transition cursor-pointer">
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                    {{ mb_substr($otherUser->name, 0, 1) }}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-semibold text-gray-900 dark:text-white text-sm">{{ $otherUser->name }}</h4>
-                                    <p class="text-xs text-gray-600 dark:text-gray-400 truncate">
-                                        {{ $lastMessage ? Str::limit($lastMessage->message, 40) : 'لا توجد رسائل' }}
-                                    </p>
-                                    <span class="text-xs text-gray-500 dark:text-gray-500">
-                                        {{ $lastMessage ? $lastMessage->created_at->diffForHumans() : 'الآن' }}
-                                    </span>
-                                </div>
-                                @if($lastMessage && !$lastMessage->is_read && $lastMessage->sender_id !== auth()->id())
-                                    <span class="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0 mt-2"></span>
-                                @endif
-                            </a>
-                        @empty
-                            <div class="text-center py-8">
-                                <svg class="w-12 h-12 mx-auto text-gray-400 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                                </svg>
-                                <p class="text-gray-500 dark:text-gray-400 text-sm">لا توجد رسائل</p>
-                            </div>
-                        @endforelse
+                    <!-- Coming Soon Notice -->
+                    <div class="text-center py-8 opacity-60">
+                        <svg class="w-16 h-16 mx-auto text-yellow-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-2">قيد التطوير</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            نظام المراسلات المباشرة سيكون متاحاً<br>في الإصدار الثاني من المنصة
+                        </p>
                     </div>
                 </div>
             </div>
