@@ -34,7 +34,7 @@ class SessionController extends Controller
     /**
      * Show the form for booking a new session
      */
-    public function create(User $user)
+    public function create(User $user, Request $request)
     {
         $teacher = $user;
         $skills = Skill::where('user_id', $teacher->id)
@@ -42,14 +42,52 @@ class SessionController extends Controller
             ->with('category')
             ->get();
 
-        return view('sessions.book', compact('teacher', 'skills'));
+        // Get pre-selected skill if provided
+        $selectedSkill = null;
+        if ($request->has('skill_id')) {
+            $selectedSkill = Skill::find($request->skill_id);
+            // Verify the skill belongs to this teacher
+            if ($selectedSkill && $selectedSkill->user_id !== $teacher->id) {
+                $selectedSkill = null;
+            }
+        }
+
+        return view('sessions.book', compact('teacher', 'skills', 'selectedSkill'));
     }
 
     /**
      * Store a newly created session
      */
-    public function store(SessionRequest $request)
+    public function store(Request $request)
     {
+        // Validate the request
+        $validated = $request->validate([
+            'skill_id' => 'required|exists:skills,id',
+            'teacher_id' => 'required|exists:users,id',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required',
+            'duration' => 'required|integer|min:30|max:240',
+            'session_type' => 'required|in:online,in-person',
+            'meeting_link' => 'nullable|url',
+            'location' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:500',
+        ], [
+            'skill_id.required' => 'المهارة مطلوبة',
+            'skill_id.exists' => 'المهارة المحددة غير موجودة',
+            'teacher_id.required' => 'مقدم الخدمة مطلوب',
+            'teacher_id.exists' => 'مقدم الخدمة غير موجود',
+            'date.required' => 'تاريخ الجلسة مطلوب',
+            'date.after_or_equal' => 'يجب أن يكون موعد الجلسة اليوم أو في المستقبل',
+            'time.required' => 'وقت الجلسة مطلوب',
+            'duration.required' => 'مدة الجلسة مطلوبة',
+            'duration.min' => 'مدة الجلسة يجب أن تكون 30 دقيقة على الأقل',
+            'duration.max' => 'مدة الجلسة يجب ألا تتجاوز 240 دقيقة',
+            'session_type.required' => 'نوع الجلسة مطلوب',
+            'meeting_link.url' => 'رابط الاجتماع غير صحيح',
+            'location.max' => 'الموقع يجب ألا يتجاوز 255 حرف',
+            'notes.max' => 'الملاحظات يجب ألا تتجاوز 500 حرف',
+        ]);
+
         $skill = Skill::findOrFail($request->skill_id);
         
         // Check if user is trying to book their own skill
@@ -59,11 +97,22 @@ class SessionController extends Controller
                 ->with('error', 'لا يمكنك حجز جلسة مع نفسك');
         }
 
+        // Combine date and time
+        $scheduledAt = $request->date . ' ' . $request->time;
+        
+        // Check if the scheduled time is in the past
+        if (strtotime($scheduledAt) < time()) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'لا يمكن حجز جلسة في وقت مضى. يرجى اختيار وقت مستقبلي');
+        }
+
         $session = Session::create([
             'skill_id' => $request->skill_id,
             'teacher_id' => $request->teacher_id,
             'learner_id' => auth()->id(),
-            'scheduled_at' => $request->scheduled_at,
+            'scheduled_at' => $scheduledAt,
             'duration' => $request->duration,
             'session_type' => $request->session_type,
             'meeting_link' => $request->meeting_link,
