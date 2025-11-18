@@ -224,18 +224,47 @@ class Skill extends Model
     }
 
     /**
-     * Get level in Arabic
+     * Get level in Arabic (short version)
      */
-    public function getLevelArabicAttribute()
+    public function getLevelArAttribute()
     {
-        return getSkillLevel($this->level);
+        return $this->level_arabic;
     }
 
     /**
-     * Get session type in Arabic
+     * Get level in Arabic (full version)
+     */
+    public function getLevelArabicAttribute()
+    {
+        $levels = [
+            'beginner' => 'مبتدئ',
+            'intermediate' => 'متوسط',
+            'advanced' => 'متقدم',
+            'expert' => 'خبير',
+        ];
+        
+        return $levels[$this->level] ?? $this->level;
+    }
+
+    /**
+     * Get session type in Arabic (short version)
+     */
+    public function getSessionTypeArAttribute()
+    {
+        return $this->session_type_arabic;
+    }
+
+    /**
+     * Get session type in Arabic (full version)
      */
     public function getSessionTypeArabicAttribute()
     {
-        return getSessionType($this->session_type);
+        $types = [
+            'online' => 'عن بعد',
+            'in-person' => 'حضوري',
+            'both' => 'كلاهما',
+        ];
+        
+        return $types[$this->session_type] ?? $this->session_type;
     }
 }

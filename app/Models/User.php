@@ -22,6 +22,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'is_admin',
+        'username',
+        'bio',
+        'location',
+        'phone',
+        'avatar',
+        'is_provider',
+        'is_learner',
+        'total_sessions',
+        'average_rating',
+        'response_rate',
     ];
 
     /**
@@ -46,6 +56,11 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'is_active' => 'boolean',
+            'is_provider' => 'boolean',
+            'is_learner' => 'boolean',
+            'total_sessions' => 'integer',
+            'average_rating' => 'decimal:2',
+            'response_rate' => 'integer',
         ];
     }
 
