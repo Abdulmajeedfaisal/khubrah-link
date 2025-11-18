@@ -17,8 +17,38 @@
 
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
+        <!-- Version 2 Notice -->
+        <div class="mb-6 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 shadow-sm">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/40 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-yellow-800 dark:text-yellow-300 mb-2">
+                        ⏳ قيد التطوير - الإصدار الثاني
+                    </h3>
+                    <p class="text-yellow-700 dark:text-yellow-400 leading-relaxed mb-3">
+                        نظام الإشعارات الفورية قيد التطوير حالياً وسيكون متاحاً في الإصدار الثاني من المنصة. سيتضمن النظام:
+                    </p>
+                    <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-400 space-y-1 mr-4">
+                        <li>إشعارات فورية للأحداث المهمة</li>
+                        <li>إشعارات البريد الإلكتروني</li>
+                        <li>إشعارات داخل التطبيق</li>
+                        <li>تخصيص أنواع الإشعارات</li>
+                    </ul>
+                    <div class="mt-4 pt-4 border-t border-yellow-200 dark:border-yellow-800">
+                        <p class="text-sm text-yellow-600 dark:text-yellow-500">
+                            <strong>ملاحظة:</strong> الإشعارات المعروضة أدناه هي أمثلة توضيحية فقط.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Filters -->
-        <div class="mb-6" x-data="{ filter: 'all' }">
+        <div class="mb-6 opacity-60" x-data="{ filter: 'all' }">
             <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-2 inline-flex gap-2">
                 <button 
                     @click="filter = 'all'"
@@ -45,7 +75,7 @@
         </div>
 
         <!-- Notifications List -->
-        <div class="space-y-3">
+        <div class="space-y-3 opacity-60 pointer-events-none">
             
             <!-- Unread Notification - New Session -->
             <div class="bg-primary-50 dark:bg-primary-900/20 border-r-4 border-primary-600 rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer">
