@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true' }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
-      :class="{ 'dark': darkMode }">
+<html lang="ar" dir="rtl" x-data="{ darkMode: localStorage.getItem('user_darkMode') === 'true' }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('user_darkMode', val))"
+      :class="{ 'dark': darkMode }" x-cloak>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,8 +14,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Styles -->
+    @vite(['resources/css/app.css'])
+    
+    <!-- Alpine.js Cloak Style -->
+    <style>
+        [x-cloak] { 
+            display: none !important; 
+        }
+        html[x-cloak] {
+            display: block !important;
+            visibility: hidden;
+        }
+        html:not([x-cloak]) {
+            visibility: visible;
+        }
+    </style>
 </head>
 <body class="font-cairo antialiased bg-gray-50 dark:bg-slate-900">
     <!-- Navbar -->
@@ -37,5 +51,8 @@
 
     <!-- Footer -->
     <x-footer />
+    
+    <!-- Scripts at end of body for faster page load -->
+    @vite(['resources/js/app.js'])
 </body>
 </html>

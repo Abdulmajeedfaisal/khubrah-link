@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" x-data="{ darkMode: localStorage.getItem('darkMode') === 'true', sidebarOpen: true }" 
-      x-init="$watch('darkMode', val => localStorage.setItem('darkMode', val))"
+<html lang="ar" dir="rtl" x-data="{ darkMode: localStorage.getItem('admin_darkMode') === 'true', sidebarOpen: true }" 
+      x-init="$watch('darkMode', val => localStorage.setItem('admin_darkMode', val))"
       :class="{ 'dark': darkMode }">
 <head>
     <meta charset="utf-8">
@@ -66,14 +66,16 @@
                     <span class="font-semibold">المستخدمون</span>
                 </a>
 
-                <!-- Reports/Complaints -->
-                <a href="{{ route('admin.reports.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.reports.*') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700' }} transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                    </svg>
-                    <span class="font-semibold">البلاغات</span>
-                    <span class="mr-auto bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-xs font-bold px-2 py-1 rounded-full">5</span>
-                </a>
+                <!-- Reports/Complaints (Coming Soon) -->
+                <div class="relative">
+                    <a href="#" onclick="event.preventDefault(); alert('⏳ هذه الميزة قيد التطوير وستكون متاحة في الإصدار الثاني');" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-not-allowed opacity-60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <span class="font-semibold">البلاغات</span>
+                        <span class="mr-auto bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 text-xs font-bold px-2 py-1 rounded-full">قريباً</span>
+                    </a>
+                </div>
 
                 <!-- Analytics -->
                 <a href="{{ route('admin.analytics') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.analytics') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700' }} transition-colors">
@@ -110,13 +112,16 @@
                     <span class="font-semibold">مراقبة الجلسات</span>
                 </a>
 
-                <!-- Reviews Management -->
-                <a href="{{ route('admin.reviews.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg {{ request()->routeIs('admin.reviews.*') ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700' }} transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                    </svg>
-                    <span class="font-semibold">إدارة التقييمات</span>
-                </a>
+                <!-- Reviews Management (Coming Soon) -->
+                <div class="relative">
+                    <a href="#" onclick="event.preventDefault(); alert('⏳ هذه الميزة قيد التطوير وستكون متاحة في الإصدار الثاني');" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-500 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-not-allowed opacity-60">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                        <span class="font-semibold">إدارة التقييمات</span>
+                        <span class="mr-auto bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 text-xs font-bold px-2 py-1 rounded-full">قريباً</span>
+                    </a>
+                </div>
 
                 <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
 
@@ -167,7 +172,7 @@
                     </button>
 
                     <!-- Admin Profile -->
-                    <div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-100 dark:bg-slate-700">
+                    <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
                         <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
                             {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
@@ -175,7 +180,7 @@
                             <p class="text-sm font-semibold text-gray-900 dark:text-white">{{ Auth::user()->name }}</p>
                             <p class="text-xs text-gray-500 dark:text-gray-400">مدير النظام</p>
                         </div>
-                    </div>
+                    </a>
 
                     <!-- Logout -->
                     <form method="POST" action="{{ route('admin.logout') }}">
