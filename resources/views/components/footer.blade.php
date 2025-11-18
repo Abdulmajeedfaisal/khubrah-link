@@ -38,25 +38,38 @@
                 <h3 class="font-bold text-gray-900 dark:text-white mb-4">روابط سريعة</h3>
                 <ul class="space-y-3">
                     <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            عن المنصة
+                        <a href="{{ url('/') }}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            الرئيسية
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                        <a href="{{ url('/') }}#features" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            المميزات
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/') }}#how-it-works" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
                             كيف تعمل
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            الأسئلة الشائعة
+                        <a href="{{ route('skills.index') }}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            استعراض المهارات
                         </a>
                     </li>
+                    @auth
                     <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            المدونة
+                        <a href="{{ route('dashboard') }}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            لوحة التحكم
                         </a>
                     </li>
+                    @else
+                    <li>
+                        <a href="{{ route('register') }}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            إنشاء حساب
+                        </a>
+                    </li>
+                    @endauth
                 </ul>
             </div>
 
@@ -64,26 +77,16 @@
             <div>
                 <h3 class="font-bold text-gray-900 dark:text-white mb-4">الفئات الشائعة</h3>
                 <ul class="space-y-3">
+                    @php
+                        $footerCategories = \App\Models\Category::active()->ordered()->limit(4)->get();
+                    @endphp
+                    @foreach($footerCategories as $category)
                     <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            التقنية والبرمجة
+                        <a href="{{ route('skills.index', ['category' => $category->id]) }}" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
+                            {{ $category->name_ar }}
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            الفنون والحرف
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            اللغات
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors text-sm">
-                            الطبخ والمأكولات
-                        </a>
-                    </li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -115,20 +118,38 @@
         </div>
 
         <!-- Bottom Bar -->
-        <div class="border-t border-gray-200 dark:border-slate-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-sm text-gray-600 dark:text-gray-400 text-center md:text-right">
-                © {{ date('Y') }} خبرة لينك. جميع الحقوق محفوظة.
-            </p>
-            <div class="flex gap-6">
-                <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+        <div class="border-t border-gray-200 dark:border-slate-700 mt-12 pt-8">
+            <!-- Legal Links -->
+            <div class="flex flex-wrap justify-center gap-6 mb-6">
+                <a href="{{ route('about') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                    عن المنصة
+                </a>
+                <a href="{{ route('terms') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                     الشروط والأحكام
                 </a>
-                <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <a href="{{ route('privacy') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                     سياسة الخصوصية
                 </a>
-                <a href="#" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                    سياسة الاستخدام
+                <a href="{{ route('faq') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                    الأسئلة الشائعة
                 </a>
+                <a href="{{ route('contact') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                    اتصل بنا
+                </a>
+                @auth
+                <a href="{{ route('settings') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                    الإعدادات
+                </a>
+                @endif
+            </div>
+            
+            <!-- Copyright -->
+            <div class="text-center">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                    © {{ date('Y') }} خبرة لينك. جميع الحقوق محفوظة. صُنع بـ 
+                    <span class="text-red-500">❤</span> 
+                    في المملكة العربية السعودية
+                </p>
             </div>
         </div>
     </div>
