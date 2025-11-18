@@ -2,6 +2,18 @@
     <x-slot name="header">إدارة المستخدمين</x-slot>
 
     <div class="space-y-6">
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+        <div class="bg-green-100 dark:bg-green-900/30 border border-green-500 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="bg-red-100 dark:bg-red-900/30 border border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+            {{ session('error') }}
+        </div>
+        @endif
         <!-- Search & Filters -->
         <div class="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
             <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-col md:flex-row gap-4">
@@ -18,13 +30,6 @@
                         </svg>
                     </div>
                 </div>
-
-                <!-- Filter by Role -->
-                <select name="role" class="px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500" onchange="this.form.submit()">
-                    <option value="">جميع الأدوار</option>
-                    <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>مدير</option>
-                    <option value="user" {{ request('role') == 'user' ? 'selected' : '' }}>مستخدم</option>
-                </select>
 
                 <!-- Filter by Status -->
                 <select name="status" class="px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500" onchange="this.form.submit()">
@@ -47,9 +52,6 @@
                         <tr>
                             <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                 المستخدم
-                            </th>
-                            <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                                الدور
                             </th>
                             <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                                 الجلسات
@@ -84,19 +86,14 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold {{ $user->role == 'admin' ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' }}">
-                                    {{ $user->role == 'admin' ? 'مدير' : 'مستخدم' }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4">
                                 <p class="text-gray-900 dark:text-white font-semibold">{{ $user->teachingSessions->count() + $user->learningSessions->count() }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-1">
-                                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                     </svg>
-                                    <span class="text-gray-900 dark:text-white font-semibold">-</span>
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm">قريباً</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
@@ -116,7 +113,7 @@
                                         </svg>
                                     </a>
                                     @if($user->is_active)
-                                    <form method="POST" action="{{ route('admin.users.suspend', $user) }}" class="inline">
+                                    <form method="POST" action="{{ route('admin.users.suspend', $user) }}" class="inline" onsubmit="return confirm('هل أنت متأكد من تعليق هذا الحساب؟')">
                                         @csrf
                                         <button type="submit" class="p-2 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors" title="تعليق">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +131,7 @@
                                         </button>
                                     </form>
                                     @endif
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
+                                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟\n\nتحذير: هذا الإجراء لا يمكن التراجع عنه!')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="حذف">
@@ -148,7 +145,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                                 <p>لا يوجد مستخدمون</p>
                             </td>
                         </tr>
