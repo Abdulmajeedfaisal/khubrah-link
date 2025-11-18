@@ -1,12 +1,19 @@
 <x-admin-layout>
+    <x-slot name="header">إدارة المهارات</x-slot>
+
     <div class="space-y-6">
-        <!-- Header -->
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">إدارة المهارات</h1>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">إدارة ومراقبة جميع المهارات في المنصة</p>
-            </div>
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+        <div class="bg-green-100 dark:bg-green-900/30 border border-green-500 text-green-700 dark:text-green-400 px-4 py-3 rounded-lg">
+            {{ session('success') }}
         </div>
+        @endif
+
+        @if(session('error'))
+        <div class="bg-red-100 dark:bg-red-900/30 border border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+            {{ session('error') }}
+        </div>
+        @endif
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -128,10 +135,7 @@
                         @forelse($skills as $skill)
                         <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
                             <td class="px-6 py-4">
-                                <div>
-                                    <p class="font-semibold text-gray-900 dark:text-white">{{ $skill->title }}</p>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ Str::limit($skill->description, 50) }}</p>
-                                </div>
+                                <p class="font-semibold text-gray-900 dark:text-white">{{ $skill->title }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 <div>
