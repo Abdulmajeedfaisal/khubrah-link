@@ -45,12 +45,19 @@ class SessionsSeeder extends Seeder
             // 70% في آخر 30 يوم، 30% في باقي السنة
             $daysAgo = rand(1, 100) <= 70 ? rand(0, 30) : rand(31, 365);
             
+            $sessionType = ['online', 'in-person'][array_rand(['online', 'in-person'])];
+            $meetingLink = $sessionType === 'online' ? 'https://meet.google.com/' . \Str::random(10) : null;
+            $location = $sessionType === 'in-person' ? 'مقهى ستاربكس - شارع التحلية' : null;
+            
             Session::create([
                 'skill_id' => $skill->id,
                 'teacher_id' => $teacher->id,
                 'learner_id' => $learner->id,
                 'scheduled_at' => now()->addDays(rand(-30, 30))->setHour(rand(8, 20)),
                 'duration' => [30, 60, 90, 120][array_rand([30, 60, 90, 120])],
+                'session_type' => $sessionType,
+                'meeting_link' => $meetingLink,
+                'location' => $location,
                 'price' => $skill->price_per_hour,
                 'status' => $status,
                 'payment_status' => $status === 'completed' ? 'paid' : 'pending',
