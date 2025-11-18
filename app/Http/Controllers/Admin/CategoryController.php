@@ -29,6 +29,7 @@ class CategoryController extends Controller
             'name_en' => 'required|string|max:255',
             'slug' => 'nullable|string|unique:categories,slug',
             'icon' => 'nullable|string',
+            'color' => 'nullable|string',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
         ]);
@@ -57,6 +58,7 @@ class CategoryController extends Controller
             'name_en' => 'required|string|max:255',
             'slug' => 'nullable|string|unique:categories,slug,' . $category->id,
             'icon' => 'nullable|string',
+            'color' => 'nullable|string',
             'description' => 'nullable|string',
             'order' => 'nullable|integer|min:0',
         ]);

@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Skill;
 use App\Models\Session;
-use App\Models\Review;
-use App\Models\Report;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -49,23 +47,25 @@ class DashboardController extends Controller
             'this_week' => Session::whereBetween('scheduled_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
         ];
 
-        // Reviews Statistics
+        // Reviews Statistics (Version 2 - Coming Soon)
         $reviewsStats = [
-            'total' => Review::count(),
-            'approved' => Review::where('is_approved', true)->count(),
-            'pending' => Review::where('is_approved', false)->count(),
-            'average_rating' => Review::avg('overall_rating'),
-            'high_rated' => Review::where('overall_rating', '>=', 4)->count(),
-            'low_rated' => Review::where('overall_rating', '<=', 2)->count(),
+            'total' => 0,
+            'approved' => 0,
+            'pending' => 0,
+            'average_rating' => 0,
+            'high_rated' => 0,
+            'low_rated' => 0,
+            'coming_soon' => true,
         ];
 
-        // Reports Statistics
+        // Reports Statistics (Version 2 - Coming Soon)
         $reportsStats = [
-            'total' => Report::count(),
-            'pending' => Report::where('status', 'pending')->count(),
-            'reviewing' => Report::where('status', 'reviewing')->count(),
-            'resolved' => Report::where('status', 'resolved')->count(),
-            'rejected' => Report::where('status', 'rejected')->count(),
+            'total' => 0,
+            'pending' => 0,
+            'reviewing' => 0,
+            'resolved' => 0,
+            'rejected' => 0,
+            'coming_soon' => true,
         ];
 
         // Categories Statistics
@@ -86,10 +86,6 @@ class DashboardController extends Controller
         // Recent Activities
         $recentUsers = User::latest()->take(5)->get();
         $recentSessions = Session::with(['skill', 'teacher', 'learner'])
-            ->latest()
-            ->take(5)
-            ->get();
-        $recentReports = Report::with(['reporter', 'reportedUser'])
             ->latest()
             ->take(5)
             ->get();
@@ -116,7 +112,6 @@ class DashboardController extends Controller
             'revenueStats',
             'recentUsers',
             'recentSessions',
-            'recentReports',
             'last7Days'
         ));
     }

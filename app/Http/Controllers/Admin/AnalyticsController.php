@@ -6,11 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Skill;
 use App\Models\Session;
-use App\Models\Review;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class AnalyticsController extends Controller
 {
@@ -53,20 +51,17 @@ class AnalyticsController extends Controller
             ->get();
 
         // Top Providers (by completed sessions)
-        $topProviders = User::withCount(['teachingSessions' => function ($q) {
+        $topProviders = User::where('is_admin', false)
+            ->withCount(['teachingSessions' => function ($q) {
                 $q->where('status', 'completed');
             }])
+            ->having('teaching_sessions_count', '>', 0)
             ->orderBy('teaching_sessions_count', 'desc')
             ->take(10)
             ->get();
 
-        // Top Rated Providers
-        $topRatedProviders = User::withCount('reviews')
-            ->withAvg('reviews', 'overall_rating')
-            ->having('reviews_count', '>=', 3)
-            ->orderBy('reviews_avg_overall_rating', 'desc')
-            ->take(10)
-            ->get();
+        // Top Rated Providers - Version 2 (Coming Soon)
+        $topRatedProviders = collect();
 
         // Skills by Category Distribution
         $skillsByCategory = Category::withCount('skills')
@@ -91,34 +86,59 @@ class AnalyticsController extends Controller
         });
 
         // User Retention Rate
-        $totalUsers = User::count();
-        $activeUsers = User::whereHas('learningSessions', function ($q) {
-            $q->where('created_at', '>=', now()->subDays(30));
-        })->count();
+        $totalUsers = User::where('is_admin', false)->count();
+        $activeUsers = User::where('is_admin', false)
+            ->whereHas('learningSessions', function ($q) use ($startDate) {
+                $q->where('created_at', '>=', $startDate);
+            })
+            ->count();
         $retentionRate = $totalUsers > 0 ? round(($activeUsers / $totalUsers) * 100, 2) : 0;
 
         // Average Sessions Per User
-        $avgSessionsPerUser = $totalUsers > 0 ? round(Session::count() / $totalUsers, 2) : 0;
+        $totalSessions = Session::count();
+        $avgSessionsPerUser = $totalUsers > 0 ? round($totalSessions / $totalUsers, 2) : 0;
 
-        // Satisfaction Rate (Average Rating)
-        $satisfactionRate = Review::where('is_approved', true)->avg('overall_rating');
-        $satisfactionRate = $satisfactionRate ? round($satisfactionRate, 2) : 0;
+        // Satisfaction Rate - Version 2 (Coming Soon)
+        $satisfactionRate = 0;
 
         // Peak Hours Analysis
         $peakHours = Session::select(DB::raw('HOUR(scheduled_at) as hour'), DB::raw('COUNT(*) as count'))
+            ->whereNotNull('scheduled_at')
             ->groupBy('hour')
             ->orderBy('count', 'desc')
             ->take(5)
             ->get();
 
+        // Weekly Activity Heatmap (Day of week x Hour of day)
+        $weeklyHeatmap = [];
+        $daysOfWeek = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        
+        for ($day = 0; $day <= 6; $day++) {
+            $weeklyHeatmap[$day] = [
+                'day' => $daysOfWeek[$day],
+                'hours' => []
+            ];
+            
+            for ($hour = 0; $hour < 24; $hour++) {
+                $count = Session::whereNotNull('scheduled_at')
+                    ->whereRaw('DAYOFWEEK(scheduled_at) - 1 = ?', [$day])
+                    ->whereRaw('HOUR(scheduled_at) = ?', [$hour])
+                    ->count();
+                
+                $weeklyHeatmap[$day]['hours'][$hour] = $count;
+            }
+        }
+
         // Key Metrics
+        $completedSessions = Session::where('status', 'completed')->count();
         $keyMetrics = [
             'retention_rate' => $retentionRate,
             'avg_sessions_per_user' => $avgSessionsPerUser,
             'satisfaction_rate' => $satisfactionRate,
-            'completion_rate' => Session::where('status', 'completed')->count() > 0 
-                ? round((Session::where('status', 'completed')->count() / Session::count()) * 100, 2) 
+            'completion_rate' => $totalSessions > 0 
+                ? round(($completedSessions / $totalSessions) * 100, 2) 
                 : 0,
+            'growth_rate' => $this->calculateGrowthRate($days),
         ];
 
         return view('admin.analytics', compact(
@@ -131,7 +151,32 @@ class AnalyticsController extends Controller
             'revenueByMonth',
             'keyMetrics',
             'peakHours',
+            'weeklyHeatmap',
             'days'
         ));
+    }
+
+    /**
+     * Calculate growth rate compared to previous period
+     */
+    private function calculateGrowthRate($days)
+    {
+        $currentPeriodStart = now()->subDays($days);
+        $previousPeriodStart = now()->subDays($days * 2);
+        $previousPeriodEnd = $currentPeriodStart;
+
+        $currentCount = User::where('is_admin', false)
+            ->where('created_at', '>=', $currentPeriodStart)
+            ->count();
+        
+        $previousCount = User::where('is_admin', false)
+            ->whereBetween('created_at', [$previousPeriodStart, $previousPeriodEnd])
+            ->count();
+
+        if ($previousCount == 0) {
+            return $currentCount > 0 ? 100 : 0;
+        }
+
+        return round((($currentCount - $previousCount) / $previousCount) * 100, 1);
     }
 }

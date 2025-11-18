@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Skill;
 use App\Models\Session;
-use App\Models\Review;
-use App\Models\Report;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -17,7 +14,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::with(['teachingSessions', 'learningSessions']);
+        // Exclude admin users from the list
+        $query = User::with(['teachingSessions', 'learningSessions'])
+                     ->where('is_admin', false);
 
         // Search by name or email
         if ($request->filled('search')) {
@@ -51,12 +50,11 @@ class UserController extends Controller
 
         $users = $query->latest()->paginate(20);
 
-        // Statistics
+        // Statistics (excluding admins)
         $stats = [
-            'total' => User::count(),
-            'active' => User::where('is_active', true)->count(),
-            'inactive' => User::where('is_active', false)->count(),
-            'admins' => User::where('role', 'admin')->count(),
+            'total' => User::where('is_admin', false)->count(),
+            'active' => User::where('is_admin', false)->where('is_active', true)->count(),
+            'inactive' => User::where('is_admin', false)->where('is_active', false)->count(),
         ];
 
         return view('admin.users.index', compact('users', 'stats'));
@@ -68,32 +66,32 @@ class UserController extends Controller
     public function show(User $user)
     {
         // Load relationships
-        $user->load(['skills', 'teachingSessions', 'learningSessions', 'reviews', 'reports']);
+        $user->load(['skills', 'teachingSessions', 'learningSessions']);
 
         // User statistics
         $userStats = [
             'skills_count' => $user->skills()->count(),
             'teaching_sessions' => $user->teachingSessions()->count(),
             'learning_sessions' => $user->learningSessions()->count(),
-            'completed_sessions' => $user->teachingSessions()->where('status', 'completed')->count(),
-            'reviews_received' => Review::where('reviewee_id', $user->id)->count(),
-            'average_rating' => Review::where('reviewee_id', $user->id)->avg('overall_rating'),
-            'reports_against' => Report::where('reported_user_id', $user->id)->count(),
+            'total_sessions' => $user->teachingSessions()->count() + $user->learningSessions()->count(),
+            'completed_sessions' => $user->teachingSessions()->where('status', 'completed')->count() + 
+                                   $user->learningSessions()->where('status', 'completed')->count(),
+            // Reviews & Reports - Version 2 (Coming Soon)
+            'reviews_received' => 0,
+            'average_rating' => 0,
+            'reports_against' => 0,
         ];
 
         // Recent activities
         $recentSessions = Session::where(function ($q) use ($user) {
             $q->where('teacher_id', $user->id)
               ->orWhere('learner_id', $user->id);
-        })->latest()->take(5)->get();
+        })->with(['skill', 'teacher', 'learner'])
+          ->latest()
+          ->take(5)
+          ->get();
 
-        $recentReviews = Review::where('reviewee_id', $user->id)
-            ->with('reviewer')
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('admin.users.show', compact('user', 'userStats', 'recentSessions', 'recentReviews'));
+        return view('admin.users.show', compact('user', 'userStats', 'recentSessions'));
     }
 
     /**
@@ -101,22 +99,23 @@ class UserController extends Controller
      */
     public function suspend(Request $request, User $user)
     {
-        $request->validate([
-            'reason' => 'required|string|max:500',
-        ], [
-            'reason.required' => 'سبب التعليق مطلوب',
-            'reason.max' => 'سبب التعليق يجب ألا يتجاوز 500 حرف',
-        ]);
+        // Check if user is admin
+        if ($user->is_admin) {
+            return redirect()
+                ->back()
+                ->with('error', 'لا يمكن تعليق حساب المدير');
+        }
 
         $user->is_active = false;
         $user->save();
 
-        logActivity('suspended', $user, 'Admin suspended user: ' . $user->name . ' - Reason: ' . $request->reason);
+        $reason = $request->input('reason', 'لم يتم تحديد السبب');
+        logActivity('suspended', $user, 'Admin suspended user: ' . $user->name . ' - Reason: ' . $reason);
 
         // TODO: Send notification to user
 
         return redirect()
-            ->route('admin.users.index')
+            ->back()
             ->with('success', 'تم تعليق الحساب بنجاح');
     }
 
@@ -133,7 +132,7 @@ class UserController extends Controller
         // TODO: Send notification to user
 
         return redirect()
-            ->route('admin.users.index')
+            ->back()
             ->with('success', 'تم تفعيل الحساب بنجاح');
     }
 
@@ -142,6 +141,13 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        // Check if user is admin
+        if ($user->is_admin) {
+            return redirect()
+                ->back()
+                ->with('error', 'لا يمكن حذف حساب المدير');
+        }
+
         // Check if user has active sessions
         $activeSessions = Session::where(function ($q) use ($user) {
             $q->where('teacher_id', $user->id)
