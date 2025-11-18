@@ -15,11 +15,11 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->check()) {
+        if (!auth('admin')->check()) {
             return redirect()->route('admin.login');
         }
 
-        if (!auth()->user()->is_admin) {
+        if (!auth('admin')->user()->is_admin) {
             abort(403, 'غير مصرح لك بالوصول إلى لوحة الإدارة');
         }
 
