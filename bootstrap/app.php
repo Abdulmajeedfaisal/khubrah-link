@@ -11,9 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // إضافة middleware لفصل الـ sessions بين الدومينات
+        $middleware->web(prepend: [
+            \App\Http\Middleware\ConfigureSession::class,
+        ]);
+        
         $middleware->alias([
             'admin' => \App\Http\Middleware\IsAdmin::class,
-            'prevent.admin.user' => \App\Http\Middleware\PreventAdminFromUserArea::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
