@@ -53,15 +53,15 @@
                     <!-- Stats -->
                     <div class="grid grid-cols-3 gap-6 pt-8">
                         <div class="text-center">
-                            <div class="text-3xl md:text-4xl font-bold text-accent-400">500+</div>
+                            <div class="text-3xl md:text-4xl font-bold text-accent-400">{{ $stats['users'] }}+</div>
                             <div class="text-sm text-gray-200">مستخدم نشط</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl md:text-4xl font-bold text-accent-400">150+</div>
+                            <div class="text-3xl md:text-4xl font-bold text-accent-400">{{ $stats['skills'] }}+</div>
                             <div class="text-sm text-gray-200">مهارة متاحة</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl md:text-4xl font-bold text-accent-400">1000+</div>
+                            <div class="text-3xl md:text-4xl font-bold text-accent-400">{{ $stats['sessions'] }}+</div>
                             <div class="text-sm text-gray-200">جلسة مكتملة</div>
                         </div>
                     </div>
@@ -81,6 +81,7 @@
                             loading="eager"
                             width="600"
                             height="500"
+                            onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\'w-full h-96 bg-gradient-to-br from-primary-400/20 to-accent-400/20 rounded-3xl flex items-center justify-center\'><svg class=\'w-32 h-32 text-white/50\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M13 10V3L4 14h7v7l9-11h-7z\'/></svg></div>';"
                         />
                     </div>
                 </div>
@@ -216,85 +217,54 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- Category Cards -->
-                <a href="{{ route('skills.index', ['category' => 'التقنية']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                        </svg>
+                @foreach($categories as $index => $category)
+                @php
+                    $colors = $category->getColorClasses();
+                    $gradientClass = "bg-gradient-to-br " . $colors['gradient'];
+                @endphp
+                <a href="{{ route('skills.index', ['category' => $category->id]) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="{{ 100 + ($index * 50) }}">
+                    <div class="w-16 h-16 mx-auto mb-3 {{ $gradientClass }} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        @switch($category->icon)
+                            @case('code')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                                @break
+                            @case('paint-brush')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                                </svg>
+                                @break
+                            @case('language')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                                </svg>
+                                @break
+                            @case('trophy')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                                </svg>
+                                @break
+                            @case('cake')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+                                </svg>
+                                @break
+                            @case('academic')
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                @break
+                            @default
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                        @endswitch
                     </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">التقنية</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">برمجة، تصميم، تطوير</p>
+                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{{ $category->name_ar }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $category->skills()->active()->count() }} مهارة</p>
                 </a>
-
-                <a href="{{ route('skills.index', ['category' => 'الفنون']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="150">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">الفنون</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">رسم، موسيقى، حرف</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'اللغات']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">اللغات</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">إنجليزي، عربي، فرنسي</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'الرياضة']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="250">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">الرياضة</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">كرة قدم، سباحة، يوغا</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'الطبخ']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="300">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">الطبخ</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">حلويات، مأكولات، معجنات</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'أكاديمي']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="350">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">أكاديمي</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">رياضيات، علوم، فيزياء</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'الأعمال']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="400">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">الأعمال</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">تسويق، إدارة، محاسبة</p>
-                </a>
-
-                <a href="{{ route('skills.index', ['category' => 'المنزل']) }}" class="group bg-white dark:bg-slate-800 rounded-2xl p-6 text-center hover:shadow-xl transition-all duration-300 hover:-translate-y-2" data-aos="fade-up" data-aos-delay="450">
-                    <div class="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-bold text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">المنزل</h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">صيانة، حدائق، ديكور</p>
-                </a>
+                @endforeach
             </div>
 
             <div class="text-center mt-12" data-aos="fade-up">
@@ -316,16 +286,27 @@
                     انضم إلى مجتمعنا المتنامي وابدأ في تبادل المهارات اليوم
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('register') }}" class="bg-accent-400 hover:bg-accent-500 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
-                        ابدأ الآن مجاناً
-                    </a>
-                    <a href="{{ route('skills.index') }}" class="bg-white hover:bg-gray-100 text-primary-600 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
-                        استعرض المهارات
-                    </a>
+                    @auth
+                        <a href="{{ route('skills.manage') }}" class="bg-accent-400 hover:bg-accent-500 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            إدارة مهاراتي
+                        </a>
+                        <a href="{{ route('skills.index') }}" class="bg-white hover:bg-gray-100 text-primary-600 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            استعرض المهارات
+                        </a>
+                    @else
+                        <a href="{{ route('register') }}" class="bg-accent-400 hover:bg-accent-500 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            ابدأ الآن مجاناً
+                        </a>
+                        <a href="{{ route('skills.index') }}" class="bg-white hover:bg-gray-100 text-primary-600 px-8 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:shadow-2xl hover:scale-105">
+                            استعرض المهارات
+                        </a>
+                    @endauth
                 </div>
-                <p class="mt-6 text-sm text-gray-200">
-                    التسجيل مجاني بالكامل • لا حاجة لبطاقة ائتمان
-                </p>
+                @guest
+                    <p class="mt-6 text-sm text-gray-200">
+                        التسجيل مجاني بالكامل • لا حاجة لبطاقة ائتمان
+                    </p>
+                @endguest
             </div>
         </div>
     </section>
