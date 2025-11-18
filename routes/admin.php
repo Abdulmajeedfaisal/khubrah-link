@@ -31,7 +31,7 @@ Route::domain(env('ADMIN_DOMAIN', 'admin.khubrahlink.test'))->group(function () 
     });
 
     // Admin Protected Routes
-    Route::middleware(['auth', 'admin'])->name('admin.')->group(function () {
+    Route::middleware(['auth:admin', 'admin'])->name('admin.')->group(function () {
         // Logout
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         
@@ -84,5 +84,10 @@ Route::domain(env('ADMIN_DOMAIN', 'admin.khubrahlink.test'))->group(function () 
         Route::get('/settings', function () {
             return view('admin.settings');
         })->name('settings');
+        
+        // Admin Profile
+        Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+        Route::patch('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+        Route::patch('/profile/password', [AuthController::class, 'updatePassword'])->name('profile.password');
     });
 });
