@@ -22,6 +22,11 @@
     }
 }
 
+/* Alpine.js cloak */
+[x-cloak] {
+    display: none !important;
+}
+
 /* Hero Image - Smooth & Professional */
 @layer components {
     .hero-container {
