@@ -26,24 +26,33 @@
                 <!-- Profile Card -->
                 <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
                     <div class="text-center">
-                        <div class="w-32 h-32 mx-auto bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-5xl shadow-xl mb-4">
-                            {{ substr($user->name, 0, 1) }}
-                        </div>
+                        @if($user->avatar)
+                            <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}" class="w-32 h-32 mx-auto rounded-full shadow-xl mb-4 object-cover">
+                        @else
+                            <div class="w-32 h-32 mx-auto bg-gradient-to-br from-primary-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-5xl shadow-xl mb-4">
+                                {{ substr($user->name, 0, 1) }}
+                            </div>
+                        @endif
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ $user->name }}</h3>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{{ $user->email }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-1">{{ '@' . $user->username }}</p>
+                        <p class="text-gray-500 dark:text-gray-500 text-xs mb-4">{{ $user->email }}</p>
                         
                         <!-- Stats -->
                         <div class="grid grid-cols-3 gap-4 pt-4 border-t border-gray-200 dark:border-slate-700">
                             <div>
-                                <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">12</div>
+                                <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ $teachingSkillsCount }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">مهارة</div>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">24</div>
+                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $completedSessionsCount }}</div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">جلسة</div>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">4.8</div>
+                                @if($user->average_rating)
+                                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ number_format($user->average_rating, 1) }}</div>
+                                @else
+                                    <div class="text-2xl font-bold text-gray-400 dark:text-gray-500">-</div>
+                                @endif
                                 <div class="text-xs text-gray-500 dark:text-gray-400">تقييم</div>
                             </div>
                         </div>
@@ -65,17 +74,27 @@
                             </svg>
                             <span>{{ $user->email }}</span>
                         </div>
-                        <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            </svg>
-                            <span>الرياض، السعودية</span>
-                        </div>
+                        @if($user->location)
+                            <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                </svg>
+                                <span>{{ $user->location }}</span>
+                            </div>
+                        @endif
+                        @if($user->phone)
+                            <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                                <span>{{ $user->phone }}</span>
+                            </div>
+                        @endif
                         <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
-                            <span>انضم في يناير 2024</span>
+                            <span>انضم في {{ $user->created_at->locale('ar')->translatedFormat('F Y') }}</span>
                         </div>
                     </div>
                 </div>
@@ -111,133 +130,147 @@
             <div class="lg:col-span-2 space-y-8">
                 
                 <!-- About -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                        نبذة عني
-                    </h2>
-                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
-                        مطور ويب محترف مع أكثر من 5 سنوات من الخبرة في تطوير تطبيقات الويب باستخدام Laravel و Vue.js. 
-                        أحب مشاركة المعرفة ومساعدة الآخرين على تعلم البرمجة وتطوير مهاراتهم التقنية.
-                    </p>
-                </div>
+                @if($user->bio)
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            نبذة عني
+                        </h2>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{{ $user->bio }}</p>
+                    </div>
+                @endif
 
                 <!-- Teaching Skills -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                @if($user->skills->count() > 0)
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
+                                مهاراتي ({{ $user->skills->count() }})
+                            </h2>
+                            <a href="{{ route('skills.manage') }}" class="text-primary-600 dark:text-primary-400 hover:underline text-sm font-semibold">
+                                إدارة المهارات
+                            </a>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            @foreach($user->skills as $skill)
+                                <div class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md transition-shadow">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-12 h-12 bg-gradient-to-br from-{{ ['blue', 'green', 'purple', 'orange', 'pink'][rand(0, 4)] }}-500 to-{{ ['blue', 'green', 'purple', 'orange', 'pink'][rand(0, 4)] }}-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">{{ $skill->title }}</h3>
+                                            @if($skill->description)
+                                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ Str::limit($skill->description, 100) }}</p>
+                                            @endif
+                                            <div class="flex flex-wrap gap-2">
+                                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium">{{ $skill->category->name_ar }}</span>
+                                                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full font-medium">{{ $skill->level_ar }}</span>
+                                                @if($skill->price_per_hour)
+                                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full font-medium">{{ number_format($skill->price_per_hour) }} ر.س/ساعة</span>
+                                                @else
+                                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full font-medium">مجاناً</span>
+                                                @endif
+                                                @if($skill->average_rating)
+                                                    <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded-full font-medium flex items-center gap-1">
+                                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                        </svg>
+                                                        {{ number_format($skill->average_rating, 1) }}
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Reviews Received -->
+                @if($reviews->count() > 0)
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                            <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                             </svg>
-                            المهارات التي أقدمها (3)
+                            التقييمات ({{ $reviewsCount }})
                         </h2>
-                        <a href="{{ route('skills.manage') }}" class="text-primary-600 dark:text-primary-400 hover:underline text-sm font-semibold">
-                            إدارة المهارات
+                        
+                        <div class="space-y-6">
+                            @foreach($reviews as $review)
+                                <div class="flex gap-4 @if(!$loop->first) pt-6 border-t border-gray-200 dark:border-slate-700 @endif">
+                                    @if($review->reviewer->avatar)
+                                        <img src="{{ asset('storage/' . $review->reviewer->avatar) }}" alt="{{ $review->reviewer->name }}" class="w-12 h-12 rounded-full object-cover flex-shrink-0">
+                                    @else
+                                        <div class="w-12 h-12 bg-gradient-to-br from-{{ ['green', 'blue', 'purple', 'orange', 'pink'][rand(0, 4)] }}-500 to-{{ ['teal', 'indigo', 'violet', 'red', 'rose'][rand(0, 4)] }}-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
+                                            {{ substr($review->reviewer->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="font-semibold text-gray-900 dark:text-white">{{ $review->reviewer->name }}</h4>
+                                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ $review->created_at->locale('ar')->diffForHumans() }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1 mb-2">
+                                            <div class="flex text-yellow-400">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                    @if($i <= $review->overall_rating)
+                                                        <span>★</span>
+                                                    @else
+                                                        <span class="text-gray-300 dark:text-gray-600">★</span>
+                                                    @endif
+                                                @endfor
+                                            </div>
+                                            @if($review->session && $review->session->skill)
+                                                <span class="text-sm text-gray-600 dark:text-gray-400 mr-2">{{ $review->session->skill->title }}</span>
+                                            @endif
+                                        </div>
+                                        @if($review->comment)
+                                            <p class="text-gray-700 dark:text-gray-300">{{ $review->comment }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        @if($reviewsCount > 5)
+                            <div class="mt-6 text-center">
+                                <a href="{{ route('profile.public', $user->username) }}#reviews" class="text-primary-600 dark:text-primary-400 hover:underline font-semibold">
+                                    عرض جميع التقييمات ({{ $reviewsCount }})
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+                <!-- Empty State -->
+                @if($user->skills->count() == 0 && $reviews->count() == 0)
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-12 text-center">
+                        <div class="w-24 h-24 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">ملفك الشخصي فارغ</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">ابدأ بإضافة مهاراتك لتظهر هنا</p>
+                        <a href="{{ route('skills.manage') }}" class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-semibold transition-all">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            إضافة مهارة
                         </a>
                     </div>
-                    
-                    <div class="space-y-4">
-                        <!-- Skill 1 -->
-                        <div class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">تطوير تطبيقات الويب بـ Laravel</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">تعلم بناء تطبيقات ويب احترافية من الصفر باستخدام Laravel</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium">التقنية</span>
-                                        <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full font-medium">متقدم</span>
-                                        <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded-full font-medium flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                            </svg>
-                                            4.9
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Skill 2 -->
-                        <div class="border border-gray-200 dark:border-slate-700 rounded-xl p-4 hover:shadow-md transition-shadow">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
-                                    </svg>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">Vue.js للمبتدئين</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">أساسيات Vue.js وبناء تطبيقات تفاعلية</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium">التقنية</span>
-                                        <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full font-medium">مبتدئ</span>
-                                        <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300 text-xs rounded-full font-medium flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                            </svg>
-                                            5.0
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews -->
-                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-200 dark:border-slate-700 p-6">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
-                        <svg class="w-6 h-6 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                        التقييمات (15)
-                    </h2>
-                    
-                    <div class="space-y-6">
-                        <!-- Review 1 -->
-                        <div class="flex gap-4">
-                            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                س
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-semibold text-gray-900 dark:text-white">سارة أحمد</h4>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">منذ أسبوعين</span>
-                                </div>
-                                <div class="flex items-center gap-1 mb-2">
-                                    <span class="text-yellow-400">★★★★★</span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 mr-2">Laravel المتقدم</span>
-                                </div>
-                                <p class="text-gray-700 dark:text-gray-300">معلم ممتاز! شرحه واضح ومبسط، واستفدت كثيراً من جلسة Laravel. أنصح بشدة بالتعلم معه. شكراً!</p>
-                            </div>
-                        </div>
-
-                        <!-- Review 2 -->
-                        <div class="flex gap-4 pt-6 border-t border-gray-200 dark:border-slate-700">
-                            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-                                م
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-semibold text-gray-900 dark:text-white">محمد علي</h4>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400">منذ شهر</span>
-                                </div>
-                                <div class="flex items-center gap-1 mb-2">
-                                    <span class="text-yellow-400">★★★★☆</span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 mr-2">Vue.js للمبتدئين</span>
-                                </div>
-                                <p class="text-gray-700 dark:text-gray-300">جلسة مفيدة جداً، تعلمت الكثير. أسلوب الشرح ممتاز والأمثلة عملية.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
         </div>
     </div>
