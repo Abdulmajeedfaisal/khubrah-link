@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes - Subdomain Only
+| Admin Routes - Prefix Based
 |--------------------------------------------------------------------------
 |
-| These routes are only accessible via admin.khubrahlink.test
+| These routes are accessible via /admin prefix
 | Sessions are completely isolated from the main domain.
 |
 */
 
-// Admin Subdomain Routes
-Route::domain(env('ADMIN_DOMAIN', 'admin.khubrahlink.test'))->group(function () {
+// Admin Routes with Prefix
+Route::prefix('admin')->middleware(['web'])->group(function () {
     
     // Admin Authentication Routes (Guest only)
     Route::name('admin.')->group(function () {

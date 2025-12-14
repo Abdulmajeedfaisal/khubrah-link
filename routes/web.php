@@ -57,13 +57,13 @@ Route::domain(env('APP_DOMAIN', 'khubrahlink.test'))->group(function () {
 
 // User Routes - Main Domain Only
 Route::domain(env('APP_DOMAIN', 'khubrahlink.test'))->group(function () {
-    // Dashboard - للمستخدمين المسجلين فقط
+    // Dashboard - للمستخدمين المسجلين والموثقين فقط
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware(['auth', 'verified'])
         ->name('dashboard');
 
-    // User Routes - للمستخدمين المسجلين فقط
-    Route::middleware(['auth'])->group(function () {
+    // User Routes - للمستخدمين المسجلين والموثقين فقط
+    Route::middleware(['auth', 'verified'])->group(function () {
         // Profile - يجب أن تكون قبل profile/{username}
         Route::get('/my-profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::get('/my-profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');

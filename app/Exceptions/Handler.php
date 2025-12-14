@@ -44,5 +44,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+        
+        // معالجة خطأ Invalid signature (في حال استخدام signed URLs)
+        // ملاحظة: تم استبدال signed URLs بنظام مخصص للتوافق مع InfinityFree
+        $this->renderable(function (\Illuminate\Routing\Exceptions\InvalidSignatureException $e, $request) {
+            if ($request->is('verify-email/*')) {
+                return redirect()->route('verification.notice')
+                    ->with('error', 'رابط التحقق غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.');
+            }
+            
+            return null;
+        });
     }
 }

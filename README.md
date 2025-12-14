@@ -11,7 +11,7 @@
 
 **منصة مجتمعية لتبادل المهارات والخبرات بين الأفراد محلياً**
 
-[الميزات](#-الميزات) • [التثبيت](#-التثبيت) • [البنية](#-بنية-المشروع) • [الحالة](#-حالة-المشروع)
+[نبذة](#-نبذة-عن-المشروع) • [الميزات](#-الميزات-المطبقة) • [التثبيت](#-التثبيت) • [البنية](#-بنية-المشروع) • [الحالة](#-حالة-المشروع)
 
 </div>
 
@@ -35,7 +35,7 @@
 - ✅ تسجيل دخول وإنشاء حساب (Laravel Breeze)
 - ✅ التحقق من البريد الإلكتروني
 - ✅ إعادة تعيين كلمة المرور
-- ✅ نظام صلاحيات Admin منفصل تماماً (Subdomain)
+- ✅ نظام صلاحيات Admin منفصل (Prefix-based `/admin`)
 - ✅ Middleware للحماية (`auth`, `admin`, `verified`)
 
 ### 👤 إدارة الملفات الشخصية
@@ -58,7 +58,7 @@
 - ✅ بحث متقدم بالكلمات المفتاحية
 - ✅ فلترة حسب الفئة، الموقع، المستوى، نوع الجلسة
 - ✅ فلترة حسب نطاق السعر
-- ✅ ترتيب النتائج (الأحدث، السعر، التقييم)
+- ✅ ترتيب النتائج (الأحدث، السعر)
 - ✅ Pagination للنتائج
 
 ### 📅 نظام الجلسات
@@ -86,6 +86,7 @@
 - ✅ تحديد الرسائل كمقروءة
 - ✅ عرض آخر رسالة في قائمة المحادثات
 - ✅ عداد الرسائل غير المقروءة
+- ⏳ **قيد التطوير:** Real-time messaging (v2.0)
 
 ### 🔔 نظام الإشعارات
 - ✅ إشعارات قاعدة البيانات (Laravel Notifications)
@@ -93,6 +94,7 @@
 - ✅ تحديد كمقروء/غير مقروء
 - ✅ حذف الإشعارات
 - ✅ عداد الإشعارات غير المقروءة
+- ⏳ **قيد التطوير:** Real-time notifications (v2.0)
 
 ### 🚨 نظام البلاغات
 - ✅ الإبلاغ عن مستخدم أو محتوى
@@ -118,9 +120,9 @@
 - ✅ **إدارة التقييمات** - الموافقة/الرفض، حذف
 - ✅ **إدارة البلاغات** - مراجعة، حل، رفض
 - ✅ **إدارة الفئات** - إضافة، تعديل، حذف، ترتيب
-- ✅ **التحليلات** - رسوم بيانية متقدمة (30 يوم)
+- ✅ **التحليلات** - رسوم بيانية متقدمة (30 يوم، Heatmap)
 - ✅ **الإعدادات** - إعدادات النظام
-- ✅ **Subdomain منفصل** - `admin.khubrahlink.test`
+- ✅ **Prefix-based Admin** - `/admin` prefix
 
 ---
 
@@ -182,11 +184,9 @@ DB_DATABASE=khubrah_link
 DB_USERNAME=root
 DB_PASSWORD=
 
-# 5. إعداد Domains (مهم جداً!)
+# 5. إعداد Domains
 APP_URL=http://khubrahlink.test
 APP_DOMAIN=khubrahlink.test
-ADMIN_DOMAIN=admin.khubrahlink.test
-SESSION_DOMAIN=null
 
 # 6. إنشاء قاعدة البيانات وتشغيل Migrations
 php artisan migrate --seed
@@ -196,20 +196,16 @@ npm run build
 # أو للتطوير:
 npm run dev
 
-# 8. إعداد Virtual Hosts (راجع ADMIN_SETUP.md)
-# يجب إعداد Apache Virtual Hosts للـ Subdomains
-
-# 9. تشغيل Apache من XAMPP Control Panel
+# 8. تشغيل Apache من XAMPP Control Panel
 ```
 
 ### الوصول للمشروع
 - **الموقع العام:** `http://khubrahlink.test`
-- **لوحة الإدارة:** `http://admin.khubrahlink.test/login`
+- **لوحة الإدارة:** `http://khubrahlink.test/admin/login`
 - **بيانات Admin الافتراضية:**
   - Email: `admin@khubrahlink.com`
   - Password: `password`
 
-⚠️ **ملاحظة مهمة:** المشروع يستخدم `Route::domain()` ولا يعمل مع `php artisan serve`
 
 ---
 
@@ -249,23 +245,25 @@ khubrah-link/
 │   │   ├── Session.php
 │   │   ├── Skill.php
 │   │   └── User.php
+│   ├── Notifications/              # 4 Notification Classes
 │   └── Helpers/
 │       └── helpers.php              # 25+ Helper Functions
 ├── database/
-│   ├── migrations/                  # 15 Migration Files
+│   ├── migrations/                  # 16 Migration Files
 │   └── seeders/
 │       ├── AdminSeeder.php
 │       ├── CategorySeeder.php       # 8 Categories
-│       ├── UsersSeeder.php          # 50 Users
-│       ├── SkillsSeeder.php         # 25 Skills
+│       ├── UsersSeeder.php          # 50+ Users
+│       ├── SkillsSeeder.php         # 45+ Skills
 │       ├── SessionsSeeder.php       # 100 Sessions
+│       ├── ReviewsSeeder.php        # Reviews
 │       └── ReportsSeeder.php        # 15 Reports
 ├── resources/
 │   ├── views/
-│   │   ├── admin/                   # 12 Admin Views
+│   │   ├── admin/                   # 15 Admin Views
 │   │   ├── auth/                    # 6 Auth Views
 │   │   ├── pages/                   # 8 Public Pages
-│   │   ├── profile/                 # 2 Profile Views
+│   │   ├── profile/                 # 5 Profile Views
 │   │   ├── skills/                  # 2 Skills Views
 │   │   ├── sessions/                # 3 Sessions Views
 │   │   ├── messages/                # 2 Messages Views
@@ -281,8 +279,8 @@ khubrah-link/
 │       ├── app.js
 │       └── bootstrap.js
 ├── routes/
-│   ├── web.php                      # User Routes (30+ routes)
-│   ├── admin.php                    # Admin Routes (20+ routes)
+│   ├── web.php                      # User Routes (50+ routes)
+│   ├── admin.php                    # Admin Routes (30+ routes)
 │   ├── auth.php                     # Auth Routes
 │   └── console.php
 ├── public/
@@ -374,16 +372,16 @@ khubrah-link/
 
 ## 🚀 حالة المشروع
 
-### ✅ مكتمل 100%
-- [x] **Frontend** - جميع الواجهات (30 واجهة)
+### ✅ مطبق 100% (الإصدار 1.0)
+- [x] **Frontend** - جميع الواجهات الأساسية (30 واجهة)
 - [x] **Database Design** - 15 جدول مع علاقات كاملة
-- [x] **Migrations** - 15 migration file
+- [x] **Migrations** - 16 migration file
 - [x] **Models** - 8 models مع relationships
-- [x] **Controllers** - 18 controller (User + Admin)
+- [x] **Controllers** - 20 controller (11 User + 9 Admin)
 - [x] **Requests** - 4 Form Request classes
 - [x] **Middleware** - Admin middleware
-- [x] **Routes** - 50+ routes (web + admin)
-- [x] **Seeders** - 6 seeders مع بيانات واقعية
+- [x] **Routes** - 80+ routes (web + admin)
+- [x] **Seeders** - 8 seeders مع بيانات واقعية
 - [x] **Helpers** - 25+ helper functions
 - [x] **Authentication** - Laravel Breeze
 - [x] **Authorization** - Admin system
@@ -392,17 +390,17 @@ khubrah-link/
 - [x] **RTL Support** - دعم العربية
 - [x] **Responsive Design** - جميع الأجهزة
 
-### 🔄 قيد التطوير
+### ⏳ قيد التطوير (الإصدار 2.0)
 - [ ] Real-time Messaging (WebSocket/Pusher)
 - [ ] Real-time Notifications (Broadcasting)
 - [ ] Email Notifications
 - [ ] File Uploads (Skills images)
 - [ ] Advanced Search (Elasticsearch)
 - [ ] Payment Integration
-- [ ] API Development
+- [ ] API Development (REST API)
 - [ ] Unit & Feature Tests
 
-### 📅 مخطط مستقبلي
+### 📅 مخطط مستقبلي (الإصدار 3.0+)
 - [ ] Mobile App (Flutter)
 - [ ] Video Call Integration
 - [ ] AI Recommendations

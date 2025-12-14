@@ -13,8 +13,9 @@ class ConfigureSession
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // تحديد اسم الـ cookie بناءً على الدومين
-        $isAdmin = $request->getHost() === config('app.admin_domain');
+        // تحديد اسم الـ cookie بناءً على المسار (path) بدلاً من الدومين
+        // لأن Admin الآن يستخدم /admin prefix بدلاً من subdomain
+        $isAdmin = $request->is('admin/*') || $request->is('admin');
         
         $cookieName = $isAdmin ? 'khubrah_link_admin_session' : 'khubrah_link_session';
         
@@ -22,11 +23,8 @@ class ConfigureSession
         config(['session.cookie' => $cookieName]);
         
         // تعيين الدومين المناسب للـ cookie
-        if ($isAdmin) {
-            config(['session.domain' => config('app.admin_domain')]);
-        } else {
-            config(['session.domain' => config('app.domain')]);
-        }
+        // الآن كلاهما على نفس الدومين، لكن الـ cookie مختلف
+        config(['session.domain' => config('app.domain')]);
         
         return $next($request);
     }
